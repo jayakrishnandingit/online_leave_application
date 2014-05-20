@@ -1,0 +1,207 @@
+a {
+    text-decoration: none !important;
+    color: #4D98D2;
+}
+
+/************************* Overriding boostrap css **************************/
+.navbar.custom {
+    margin-bottom: 0;
+    border: none;
+    background-color: #FFFFFF;
+    border-bottom-style:double;
+    border-bottom-color:#0F73AA;
+}
+
+.navbar-text.custom {
+    margin: 0;
+    color: #15ADFF;
+}
+
+.navbar-link.custom {
+    margin: 0;
+    color: #15ADFF;
+}
+
+.navbar-link.custom:hover {
+    color: #15ADFF;
+    opacity: 0.70;
+}
+
+.navbar-brand.custom {
+    color: #15ADFF;
+}
+
+.navbar-brand.custom:hover {
+    opacity: 0.70;
+    color: #15ADFF;
+}
+
+.nav-tabs.custom {
+  border-bottom: 1px solid #CDCDCD;
+}
+
+.nav-tabs.custom > li.active > a,
+.nav-tabs.custom > li.active > a:hover,
+.nav-tabs.custom > li.active > a:focus {
+  cursor: pointer;
+  background-color: #4D98D2;
+  border: 1px solid #bce8f1;
+  color: #ffffff;
+  border-bottom-color: transparent;
+}
+
+.badge.red, .badge.profile, .badge.blue {
+    font-size: 12px;
+    background-color: #CC0000;
+    top: 0;
+    vertical-align: top;
+}
+
+.badge.blue {
+    background-color: #15ADFF;
+}
+
+.badge.profile {
+    background-color: #15ADFF;
+    margin: 1%;
+    padding: 1%;
+    font-size: 12px;
+}
+
+.badge.profile a {
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 5%;
+}
+
+.btn-primary.custom, .btn-primary.customHidden {
+    background-color: #15ADFF;
+    border-color: #15ADFF;
+}
+
+.btn-primary.customHidden, .btn-default.customHidden {
+  display: none;
+}
+
+.table-bordered tr.valueTr {
+    color: #333;
+}
+
+.table-bordered tr.valueTr:hover {
+    background-color: whiteSmoke;
+}
+
+.table-bordered tr th.noRecords {
+    text-align: center;
+    font-style: italic;
+    font-weight: normal;
+    color: #999;
+}
+
+.alert.alert-fixed {
+    position: fixed;
+    width: 71%;
+    z-index: 3;
+    top: 15%;
+    margin-left: 22%;
+}
+
+.alert .content {
+    text-align: center;
+}
+
+.table {
+    color: #777;
+}
+
+.table-bordered.custom {
+    background-color: #FFFFFF;
+}
+
+.table-bordered.custom tbody tr:nth-child(even) {
+    /*background-color: #FCF8E3;*/
+    background-color: #DFF0D8;
+}
+
+.table-bordered.custom thead {
+    background: #4D98D2;
+    color: #FFFFFF;
+}
+
+/****************************************************************************/
+
+.fullContainer, .fullContainerMain {
+    float: left;
+    width: 100%;
+    z-index: 0;
+    display: inline-block;
+}
+
+.fullContainerMain {
+    background: #FFFFFF;
+    /*background: #e8e5ce;*/
+}
+
+.halfContainer {
+    width: 50%;
+    float: left;
+}
+
+.rightContainer, .rightContainerMain {
+    width: 45%;
+    float: left;
+    margin: 1% 0 1% 1%;
+    padding: 1%;
+    min-height: 530px;
+}
+
+.rightContainerMain {
+    margin-left: 16%;
+}
+
+.leftContainer {
+    width: 45%;
+    float: left;
+    display: inline-block;
+    margin: 1% 1% 1% 0;
+    padding: 1% 0 1% 0;
+    min-height: 600px;
+}
+
+.halfContainer.login {
+    border-right: 1px solid #CDCDCD;
+}
+
+.loginContainer, .socialLoginContainer {
+    float: left;
+    width: 60%;
+    padding: 5% 10%;
+    margin-left: 15%;
+}
+
+.loginContainer {
+    margin-top: 5%;
+    padding: 5% 5% 0 5%;
+}
+
+.disableme {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+    background-color: #333;
+    opacity: 0.5;
+}
+
+/*****************************************************************************/
+.floatRight {
+    float: right;
+}
+
+.marginAll1P {
+    margin: 1% !important;
+}
+
+.marginTop4P {
+    margin-top: 4% !important;
+}
