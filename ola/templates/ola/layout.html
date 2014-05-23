@@ -14,10 +14,38 @@
 	{% block head %}{% endblock %}
 </head>
 <body>
+	<nav class="navbar custom navbar-fixed-top" role="navigation">
+	  <div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <a class="navbar-brand custom" href="">OLA</a>
+	    </div>
+	    {% if request.user.is_authenticated %}
+	    	<div class="userContainer">
+	    		<div class="customIconContainer">
+	    			<a href="{% url 'django.contrib.auth.views.logout_then_login' %}?next={{request.path}}">
+	    				<i class="fa fa-sign-out fa-lg"></i>
+		    		</a>
+		    	</div>
+		    	<div class="welcome">
+			    	<p class="navbar-text navbar-right custom">Welcome, 
+			    		{% if request.user.first_name %}
+		    				{{request.user.first_name}}
+		    			{% else %}
+		    				{{request.user.username}}
+		    			{% endif %}
+		    		</p>
+		    	</div>
+	    	</div>
+	    {% endif  %}
+	  </div><!-- /.container-fluid -->
+	</nav>
 	{% if not request.user.is_authenticated %}
 		{% block login_content %}{% endblock %}
 	{% else %}
+	<div class="fullContainer">
 		{% block content %}{% endblock %}
+	</div>
 	{% endif %}
 </body>
 </html>

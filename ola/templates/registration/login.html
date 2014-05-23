@@ -4,41 +4,24 @@
 	<link rel="stylesheet" href="{% static 'css/bootstrap-social.css' %}" type="text/css"/>
 {% endblock %}
 {% block login_content %}
-<div class="fullContainer">
-	<legend>Login</legend>
-	<div class="halfContainer login">
-		<div class="loginContainer well">
-			<form class="form-horizontal" role="form" method="POST" action="{% url 'django.contrib.auth.views.login' %}">
-				{% csrf_token %}
-				<div class="input-group marginAll1P">
-				  <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
-				  <input class="form-control" type="text" placeholder="Email address" id="id_username" name="username">
-				</div>
-				<div class="input-group marginAll1P">
-				  <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-				  <input class="form-control" type="password" placeholder="Password" id="id_password" name="password">
-				</div>
-				<div class="form-group marginTop4P">
-				    <div class="floatRight col-sm-4">
-				      <button type="submit" class="btn btn-primary custom">Sign in</button>
-				      <input type="hidden" name="next" value="{{ next }}" />
-				    </div>
-				</div>
-			</form>
-	  	</div>
-	</div>
-	<div class="halfContainer">
-		<div class="socialLoginContainer">
-			<legend>Launching Soon!</legend>
-			<a class="btn btn-social btn-block btn-google-plus disabled" href="javascript:void(0);">
-	  			<i class="fa fa-google-plus fa-fw"></i>
-	  			<b>Sign in using Google</b>
-	  		</a>
-	  		<a class="btn btn-social btn-block btn-linkedin disabled" href="javascript:void(0);">
-	  			<i class="fa fa-linkedin fa-fw"></i>
-	  			<b>Sign in using Linkedin</b>
-	  		</a>
-	  	</div>
-	</div>
-</div>
+	<div class="loginContainer">
+		<legend>Login</legend>
+		<form class="form-horizontal" role="form" method="POST" action="{% url 'django.contrib.auth.views.login' %}">
+			{% csrf_token %}
+			<div class="input-group marginAll1P">
+			  <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
+			  <input class="form-control" type="text" placeholder="Username" id="id_username" name="username">
+			</div>
+			<div class="input-group marginAll1P">
+			  <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+			  <input class="form-control" type="password" placeholder="Password" id="id_password" name="password">
+			</div>
+			<div class="form-group marginTop4P">
+			    <div class="col-sm-offset-9 col-sm-4">
+			      <button type="submit" class="btn btn-primary custom">Sign in</button>
+			      <input type="hidden" name="next" value="{{ next }}" />
+			    </div>
+			</div>
+		</form>
+  	</div>
 {% endblock %}

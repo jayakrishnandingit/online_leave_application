@@ -6,15 +6,26 @@ a {
 /************************* Overriding boostrap css **************************/
 .navbar.custom {
     margin-bottom: 0;
-    border: none;
-    background-color: #FFFFFF;
-    border-bottom-style:double;
-    border-bottom-color:#0F73AA;
+    border-bottom: 1px solid #CDCDCD;
+    /* Safari 4-5, Chrome 1-9 */
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#0F73AA), to(#4D98D2));
+
+    /* Safari 5.1, Chrome 10+ */
+    background: -webkit-linear-gradient(top, #4D98D2, #0F73AA);
+
+    /* Firefox 3.6+ */
+    background: -moz-linear-gradient(top, #4D98D2, #0F73AA);
+
+    /* IE 10 */
+    background: -ms-linear-gradient(top, #4D98D2, #0F73AA);
+
+    /* Opera 11.10+ */
+    background: -o-linear-gradient(top, #4D98D2, #0F73AA);
 }
 
 .navbar-text.custom {
     margin: 0;
-    color: #15ADFF;
+    color: #FFFFFF;
 }
 
 .navbar-link.custom {
@@ -28,12 +39,12 @@ a {
 }
 
 .navbar-brand.custom {
-    color: #15ADFF;
+    color: #FFFFFF;
 }
 
 .navbar-brand.custom:hover {
     opacity: 0.70;
-    color: #15ADFF;
+    color: #FFFFFF;
 }
 
 .nav-tabs.custom {
@@ -172,16 +183,21 @@ a {
     border-right: 1px solid #CDCDCD;
 }
 
-.loginContainer, .socialLoginContainer {
+.loginContainer {
+    margin: 10% auto auto 26%;
+    width: 37%;
+    padding: 40px 40px;
     float: left;
-    width: 60%;
-    padding: 5% 10%;
-    margin-left: 15%;
+    box-shadow: 0 3px 2px #CDCDCD;
+    border-radius: 0;
 }
 
-.loginContainer {
-    margin-top: 5%;
-    padding: 5% 5% 0 5%;
+@media handheld, screen and (max-width: 720px), (max-width: 1300px) {
+    .loginContainer {
+        margin: 10% 20% auto 20%;
+        padding: 20px 20px;
+        width: auto;
+    }
 }
 
 .disableme {
