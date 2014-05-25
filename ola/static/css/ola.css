@@ -141,6 +141,40 @@ a {
 
 /****************************************************************************/
 
+/********************* bread crumb css ***************************************/
+#crumbs ul li a {
+    display: block;
+    float: left;
+    height: 50px;
+    background: #3498db;
+    text-align: center;
+    padding: 30px 40px 50px 60px;
+    position: relative;
+    margin: 0 10px 0 0; 
+    
+    font-size: 20px;
+    text-decoration: none;
+    color: #fff;
+}
+
+#crumbs ul li a:after {
+    content: "";  
+    border-top: 40px solid transparent;
+    border-bottom: 40px solid transparent;
+    border-left: 40px solid #3498db;
+    position: absolute; right: -40px; top: 0;
+}
+
+#crumbs ul li a:before {
+    content: "";  
+    border-top: 40px solid transparent;
+    border-bottom: 40px solid transparent;
+    border-left: 40px solid #FFFFFF;
+    position: absolute; left: 0; top: 0;
+}
+
+/*****************************************************************************/
+
 .fullContainer, .fullContainerMain {
     float: left;
     width: 100%;
@@ -188,7 +222,6 @@ a {
     width: 37%;
     padding: 40px 40px;
     float: left;
-    box-shadow: 0 3px 2px #CDCDCD;
     border-radius: 0;
 }
 
@@ -220,4 +253,8 @@ a {
 
 .marginTop4P {
     margin-top: 4% !important;
+}
+
+.marginTop60 {
+    margin-top: 60px !important;
 }

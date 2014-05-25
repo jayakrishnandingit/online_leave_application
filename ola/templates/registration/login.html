@@ -17,9 +17,12 @@
 			  <input class="form-control" type="password" placeholder="Password" id="id_password" name="password">
 			</div>
 			<div class="form-group marginTop4P">
-			    <div class="col-sm-offset-9 col-sm-4">
-			      <button type="submit" class="btn btn-primary custom">Sign in</button>
-			      <input type="hidden" name="next" value="{{ next }}" />
+			    <div class="floatRight col-sm-3">
+			      	<button type="submit" class="btn btn-primary custom">Sign in</button>
+			      	<input type="hidden" name="next" value="{{ next }}" />
+			    </div>
+				<div class="floatRight">
+			    	<a href="{% url 'subscriber.views.register' %}">Want to Register Your Company?</a>
 			    </div>
 			</div>
 		</form>
