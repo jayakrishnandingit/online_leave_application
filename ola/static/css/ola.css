@@ -139,38 +139,106 @@ a {
     color: #FFFFFF;
 }
 
+.signup-btn {
+    background-color: #ffac33;
+    background-image: linear-gradient(#ffcc4d, #ffac33);
+    border-color: #f1a02a;
+    color: #333; 
+}
+
 /****************************************************************************/
+/************************* font awesome css overrides ***********************/
+.fa.fa-blue {
+    color: #4D98D2;
+}
 
+.fa.fa-blue-dark {
+    color: #0F73AA;
+}
+
+.fa.fa-green {
+    color: green;
+}
+
+.fa.fa-red {
+    color: red;
+}
+
+.fa.fa-orange {
+    color: orangered;
+}
+/****************************************************************************/
 /********************* bread crumb css ***************************************/
-#crumbs ul li a {
-    display: block;
-    float: left;
-    height: 50px;
-    background: #3498db;
-    text-align: center;
-    padding: 30px 40px 50px 60px;
-    position: relative;
-    margin: 0 10px 0 0; 
-    
-    font-size: 20px;
-    text-decoration: none;
-    color: #fff;
+ul#breadcrumbs-one {
+    margin: 0 0 2% 0;
+    padding: 0;
+    list-style: none;
+}
+#breadcrumbs-one{
+  background: #eee;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #f5f5f5 #e5e5e5 #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 2px rgba(0,0,0,.2);
+  overflow: hidden;
+  width: 100%;
 }
 
-#crumbs ul li a:after {
-    content: "";  
-    border-top: 40px solid transparent;
-    border-bottom: 40px solid transparent;
-    border-left: 40px solid #3498db;
-    position: absolute; right: -40px; top: 0;
+#breadcrumbs-one li{
+  float: left;
 }
 
-#crumbs ul li a:before {
-    content: "";  
-    border-top: 40px solid transparent;
-    border-bottom: 40px solid transparent;
-    border-left: 40px solid #FFFFFF;
-    position: absolute; left: 0; top: 0;
+#breadcrumbs-one a{
+  padding: .7em 1em .7em 2em;
+  float: left;
+  text-decoration: none;
+  color: #333;
+  position: relative;
+  background: #FFFFFF;
+  background: linear-gradient(to right, #f5f5f5, #ddd);  
+  border-bottom: 3px transparent;
+}
+
+#breadcrumbs-one li:first-child a{
+  padding-left: 1em;
+  border-radius: 5px 0 0 5px;
+}
+
+#breadcrumbs-one a::after,
+#breadcrumbs-one a::before{
+  content: "";
+  position: absolute;
+  top: 50%;
+  margin-top: -1.5em;   
+  border-top: 1.5em solid transparent;
+  border-bottom: 1.5em solid transparent;
+  border-left: 1em solid;
+  right: -1em;
+}
+
+#breadcrumbs-one a::after{ 
+  z-index: 2;
+  border-left-color: #ddd;  
+}
+
+#breadcrumbs-one a::before{
+  border-left-color: #ccc;  
+  right: -1.1em;
+  z-index: 1; 
+}
+
+#breadcrumbs-one .current,
+#breadcrumbs-one .current:hover{
+  font-weight: bold;
+  background: #FFFFFF;
+  color: #333;
+  border-bottom: 3px solid #4D98D2;
+}
+
+#breadcrumbs-one .current::after,
+#breadcrumbs-one .current::before{
+  border-left-color: #fff;
 }
 
 /*****************************************************************************/
@@ -242,6 +310,76 @@ a {
     opacity: 0.5;
 }
 
+.tabContents {
+    margin-left: auto;
+    margin-right: auto;
+    float: left;
+    width: 98%;
+    padding: 1%;
+    background-color: #d9edf7;
+    color: #31708f;
+}
+
+.tabContents.white {
+    background-color: #FFFFFF;
+}
+
+.requiredField:after {
+    content: ' *';
+    color: red;
+}
+
+.without-form-control input {
+  display: block;
+  width: auto;
+  height: auto;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #555555;
+  vertical-align: middle;
+  background-color: #ffffff;
+  background-image: none;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+          transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+
+.without-form-control input:focus {
+  border-color: #66afe9;
+  outline: 0;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+.without-form-control input:-moz-placeholder {
+  color: #999999;
+}
+
+.without-form-control input::-moz-placeholder {
+  color: #999999;
+  opacity: 1;
+}
+
+.without-form-control input:-ms-input-placeholder {
+  color: #999999;
+}
+
+.without-form-control input::-webkit-input-placeholder {
+  color: #999999;
+}
+
+.error {
+    width: auto;
+    color: red;
+    font-weight: normal !important;
+    font-size: 12px !important;
+    clear: both;
+}
+
 /*****************************************************************************/
 .floatRight {
     float: right;
@@ -257,4 +395,8 @@ a {
 
 .marginTop60 {
     margin-top: 60px !important;
+}
+
+.displayNone {
+    display: none;
 }

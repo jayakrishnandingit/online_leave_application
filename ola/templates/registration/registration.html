@@ -1,9 +1,119 @@
 {% extends "ola/layout.html" %}
-
+{% block head %}
+	
+{% endblock %}
 {% block login_content %}
-	<div id="crumbs" class="marginTop60">
-		<ul>
-			<li><a href="#">Breadcrumb</a></li>
-		</ul>
+<div class="fullContainer marginTop60" ng-app="validationApp" ng-controller="FormController">
+	<ul id="breadcrumbs-one" class="nav-tabs">
+	    <li><a href="javascript:void(0);" id="tab1" class="current">Company Registration</a></li>
+	    <li><a href="javascript:void(0);" id="tab2">Admin Registration</a></li>
+	    <li><a href="javascript:void(0);" id="tab3">Send Invitation</a></li>
+	</ul>
+	<div id="regError" class="alert alert-danger">
+		Oops! Please correct the below error to proceed.
 	</div>
+		<div id="companyRegistrationTab" class="tabContents white mainTab companyForm">
+			<form id="clientRegistrationForm" name="clientRegistrationForm" class="form-horizontal" role="form" action="javascript:void(0);" method="POST" novalidate>
+				<div class="form-group">
+					<label class="control-label col-xs-4 requiredField">
+						Company Name
+					</label>
+					<div class="col-xs-3">
+						{{ client_form.name}}
+						<span ng-show="clientRegistrationForm.name.$invalid && clientRegistrationForm.name.$dirty" class="error">Please tell us your company name.</span>
+					</div>
+				</div>
+				<div class="alert alert-warning">
+				    <ul class="fa-ul">
+				      <li>
+				        <i class="fa fa-info-circle fa-lg fa-li"></i>
+				        By Company Name we intend the name of your Organization. For example<code>ABCD Technologies</code>. All the correspondence towards you will be made with this name.
+				        <br clear="all" />
+				        For those who outsource freelance jobs please mention an appropriate name that suites your project and which can be easily recognized by the employees assigned with your job.
+				      </li>
+				    </ul>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-4 col-xs-3">
+						<button type="button" tab="2" class="btn btn-primary" ng-click="validate_and_proceed(clientRegistrationForm.$valid, 'showRegistrationTab(2)');" ng-disabled="clientRegistrationForm.$invalid">Next</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div id="adminRegistrationTab" class="tabContents white mainTab adminForm displayNone">
+			<div class="alert alert-warning">
+			    <ul class="fa-ul">
+			      <li>
+			        <i class="fa fa-info-circle fa-lg fa-li"></i>
+			        The person who manages whole activity for your organization.
+			      </li>
+			    </ul>
+			</div>
+			<form id="adminRegistrationForm" name="adminRegistrationForm" class="form-horizontal" role="form" action="javascript:void(0);" method="POST" novalidate>
+				<div class="form-group">
+					<label class="control-label col-xs-4 custom requiredField">First Name</label>
+					<div class="col-xs-3">
+						{{ subscriber_creation_form.first_name }}
+						<span ng-show="adminRegistrationForm.first_name.$invalid && adminRegistrationForm.first_name.$dirty" class="error">Required.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-xs-4 custom requiredField">Last Name</label>
+					<div class="col-xs-3">
+						{{ subscriber_creation_form.last_name }}
+						<span ng-show="adminRegistrationForm.last_name.$invalid && adminRegistrationForm.last_name.$dirty" class="error">Required.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-xs-4 custom requiredField" for="inputPassword">Email</label>
+					<div class="col-xs-3" id="zone">
+						{{ subscriber_creation_form.email }}
+						<span ng-show="adminRegistrationForm.email.$invalid && adminRegistrationForm.email.$dirty" class="error">Invalid.</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-xs-4 custom requiredField" for="inputPassword">Username</label>
+					<div class="col-xs-3 without-form-control" id="zone">
+						{{ user_creation_form.username }}
+						<span name="username" class="error"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-xs-4 custom requiredField" for="inputPassword">Password</label>
+					<div class="col-xs-3 without-form-control" id="zone">
+						{{ user_creation_form.password1 }}
+						<span name="password1" class="error"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-xs-4 custom requiredField" for="inputPassword">Confirm Password</label>
+					<div class="col-xs-3 without-form-control" id="zone">
+						{{ user_creation_form.password2 }}
+						<span name="password2" class="error"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-4 col-xs-3">
+						<button type="button" tab="3" class="btn btn-primary" ng-click="validate_and_proceed(adminRegistrationForm.$valid, 'showRegistrationTab(3)');" ng-disabled="adminRegistrationForm.$invalid">Next</button>
+						<button type="button" tab="1" class="btn btn-primary btn-back">Back</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div id="invitationTab" class="tabContents white mainTab displayNone">
+
+		</div>
+	</form>
+</div>
+<script>
+	$.each($('.btn-back'), function (index, elem) {
+		$(elem).on('click', function () {
+			var tab = $(elem).attr('tab');
+			showRegistrationTab(tab);
+		});
+	});
+	$(document).ready(function() {
+		showRegistrationTab(1);
+	});
+</script>
 {% endblock %}

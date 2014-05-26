@@ -89,6 +89,27 @@ function setFormFieldValues(jsonObj, formId) {
 	});
 }
 
+function validateForm(formId, region) {
+	var flag = false;
+	var jsonObj = {};
+	if (region) {
+		$.each($('#' + formId + ' .' + region + ' :input').not(':input[type=button], :input[type=submit], :input[type=reset]'), function(index, element) {
+			flag = $(element).val() ? true : false;
+			if (!flag) {
+				jsonObj[$(element).attr('name')] = ['This field is required.'];
+			}
+		});
+	} else {
+		$.each($('#' + formId + ' :input').not(':input[type=button], :input[type=submit], :input[type=reset]'), function(index, element) {
+			flag = $(element).val() ? true : false;
+			if (!flag) {
+				jsonObj[$(element).attr('name')] = ['This field is required.'];
+			}
+		});
+	}
+	return {'is_valid' : flag, 'errors' : jsonObj};
+}
+
 function setHtmlValues(jsonObj, boolShdBe, nullValueString) {
 	for (var key in jsonObj) {
 		if ($('#' + key)) {
