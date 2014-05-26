@@ -68,7 +68,14 @@
 					<label class="control-label col-xs-4 custom requiredField" for="inputPassword">Email</label>
 					<div class="col-xs-3" id="zone">
 						{{ subscriber_creation_form.email }}
-						<span ng-show="adminRegistrationForm.email.$invalid && adminRegistrationForm.email.$dirty" class="error">Invalid.</span>
+						<div ng-show="adminRegistrationForm.email.$invalid && adminRegistrationForm.email.$dirty">
+							<span ng-show="adminRegistrationForm.email.$error.required" class="error">
+								Required.
+							</span>
+							<span ng-show="adminRegistrationForm.email.$error.email" class="error">
+								Invalid Email.
+							</span>
+						</div>
 					</div>
 				</div>
 				<div class="form-group">
