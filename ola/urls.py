@@ -11,4 +11,5 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     (r'^accounts/login', 'django.contrib.auth.views.login'),
     url(r'^accounts/registration$', 'subscriber.views.register'),
+    url(r'^api/data$', 'ola.views.rest_api_handler'),
 )

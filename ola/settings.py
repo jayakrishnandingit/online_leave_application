@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'client',
     'leave',
     'subscriber',
+    'south',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -87,6 +88,7 @@ DATETIME_INPUT_FORMATS = (
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
+LOGIN_REDIRECT_URL = '/'
 
 TIME_ZONE = 'Asia/Kolkata'
 TIME_INPUT_FORMATS = (

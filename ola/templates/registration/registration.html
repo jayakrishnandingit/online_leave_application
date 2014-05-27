@@ -3,11 +3,11 @@
 	
 {% endblock %}
 {% block login_content %}
-<div class="fullContainer marginTop60" ng-controller="FormController">
+<div class="fullContainer marginTop60" ng-controller="OlaFormController">
 	<ul id="breadcrumbs-one" class="nav-tabs">
 	    <li><a href="javascript:void(0);" id="tab1" class="current">Company Registration</a></li>
 	    <li><a href="javascript:void(0);" id="tab2">Admin Registration</a></li>
-	    <li><a href="javascript:void(0);" id="tab3">Send Invitation</a></li>
+	    <li><a href="javascript:void(0);" id="tab3">Payment</a></li>
 	</ul>
 	<div id="regError" class="alert alert-danger">
 		Oops! Please correct the below error to proceed.
@@ -35,7 +35,7 @@
 				</div>
 				<div class="form-group">
 					<div class="col-sm-offset-4 col-xs-3">
-						<button type="button" tab="2" class="btn btn-primary" ng-click="validate_and_proceed(clientRegistrationForm.$valid, 'showRegistrationTab(2)');" ng-disabled="clientRegistrationForm.$invalid">Next</button>
+						<button type="button" tab="2" class="btn btn-primary" ng-click="validate_and_proceed(clientRegistrationForm.$valid, 2, 'showRegistrationTab');" ng-disabled="clientRegistrationForm.$invalid">Next</button>
 					</div>
 				</div>
 			</form>
@@ -80,35 +80,66 @@
 				</div>
 				<div class="form-group">
 					<label class="control-label col-xs-4 custom requiredField" for="inputPassword">Username</label>
-					<div class="col-xs-3 without-form-control" id="zone">
-						{{ user_creation_form.username }}
+					<div class="col-xs-3" id="zone">
+						<input id="id_username" maxlength="30" name="username" type="text" ng-model="form_data.username" class="form-control" required>
 						<span name="username" class="error"></span>
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="control-label col-xs-4 custom requiredField" for="inputPassword">Password</label>
-					<div class="col-xs-3 without-form-control" id="zone">
-						{{ user_creation_form.password1 }}
-						<span name="password1" class="error"></span>
+					<div class="col-xs-3" id="zone">
+						<input id="id_password1" name="password1" type="password" ng-model="form_data.password1" class="form-control" required password-check="form_data.password2">
+						<div ng-show="adminRegistrationForm.password1.$invalid && adminRegistrationForm.password1.$dirty">
+							<span ng-show="adminRegistrationForm.password1.$error.required" class="error">
+								Required.
+							</span>
+							<span ng-show="adminRegistrationForm.password1.$error.match" class="error">
+								Password Mismatch.
+							</span>
+						</div>
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="control-label col-xs-4 custom requiredField" for="inputPassword">Confirm Password</label>
-					<div class="col-xs-3 without-form-control" id="zone">
-						{{ user_creation_form.password2 }}
-						<span name="password2" class="error"></span>
+					<div class="col-xs-3" id="zone">
+						<input id="id_password2" name="password2" type="password" ng-model="form_data.password2" class="form-control" required password-check="form_data.password1">
+						<div ng-show="adminRegistrationForm.password2.$invalid && adminRegistrationForm.password2.$dirty">
+							<span ng-show="adminRegistrationForm.password2.$error.required" class="error">
+								Required.
+							</span>
+							<span ng-show="adminRegistrationForm.password2.$error.match" class="error">
+								Password Mismatch.
+							</span>
+						</div>
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="col-sm-offset-4 col-xs-3">
-						<button type="button" tab="3" class="btn btn-primary" ng-click="validate_and_proceed(adminRegistrationForm.$valid, 'showRegistrationTab(3)');" ng-disabled="adminRegistrationForm.$invalid">Next</button>
+						<button type="button" tab="3" class="btn btn-primary" ng-click="validate_and_proceed(adminRegistrationForm.$valid, 3, 'showRegistrationTab');" ng-disabled="adminRegistrationForm.$invalid">Next</button>
 						<button type="button" tab="1" class="btn btn-primary btn-back">Back</button>
 					</div>
 				</div>
 			</form>
 		</div>
-		<div id="invitationTab" class="tabContents white mainTab displayNone">
-
+		<div id="paymentTab" class="tabContents white mainTab displayNone">
+			<div class="popupContainer">
+				<div class="formContainerWithDisplay">
+					<div class="alert alert-info">
+						<b>Thank you for registering with us.</b>
+						<br clear="all" />
+						It is our pleasure to inform you that, we are offering the service for <b>FREE*</b>. Please note, OLA is in its primary stage of development and more convenience can be availed at later stages of your journey with us.
+						We always thrive to give you a novel experience. Thank you once again.
+					</div>
+					<div class="fullContainer">
+						<a href="/">
+							<button class="btn signup-btn floatRight">Continue to site</button>
+						</a>
+					</div>
+					<div class="commonTimeFooter floatLeft">
+						* Free service will be available only for a limited period. The Terms and Conditions will be mailed to you once we plan to upgrade accounts.
+					</div>
+				</div>
+			</div>
 		</div>
 	</form>
 </div>
