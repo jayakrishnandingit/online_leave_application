@@ -1,16 +1,17 @@
-var validationApp = angular.module('validationApp', []);
+var ola = angular.module('ola', []);
 
 // create angular controller
-validationApp.controller('FormController', function($scope) {
+ola.controller('FormController', function($scope) {
     $scope.forms = [];
     $scope.form_data = {};
+    $scope.submitted = true;
     // function to submit the form after all validation has occurred            
     $scope.validate_and_proceed = function(isValid, callback) {
         // check to make sure the form is completely valid
+        $scope.submitted = true;
         if (isValid) {
             eval(callback);
             $scope.forms.push($scope.form_data);
-            console.log($scope.forms);
         } else {
             $('#regError').show();
         }
