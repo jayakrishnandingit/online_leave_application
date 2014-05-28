@@ -24,10 +24,32 @@
 	      <a class="navbar-brand custom" href="">Sample App Angular</a>
 	    </div>
 	    {% if request.user.is_authenticated %}
+	    	<div class="collapse navbar-collapse custom" id="main-nav">
+		      <ul class="nav navbar-nav">
+		      	<li id="nav-home" class="active">
+		      		<a href="#">
+		      			<i class="fa fa-home fa-fw fa-white"></i>
+		      			Home
+		      		</a>
+		      	</li>
+		      	<li id="nav-leave-history">
+		      		<a href="#">
+		      			<i class="fa fa-clock-o fa-fw fa-white"></i>
+		      			Leave History
+		      		</a>
+		      	</li>
+		        <li id="nav-settings">
+		        	<a href="#">
+		        		<i class="fa fa-wrench fa-fw fa-white"></i>
+		        		Settings
+		        	</a>
+		        </li>
+		      </ul>
+		    </div><!-- /.navbar-collapse -->
 	    	<div class="userContainer">
 	    		<div class="customIconContainer">
 	    			<a href="{% url 'django.contrib.auth.views.logout_then_login' %}?next={{request.path}}">
-	    				<i class="fa fa-sign-out fa-lg"></i>
+	    				<i class="fa fa-sign-out fa-lg fa-white"></i>
 		    		</a>
 		    	</div>
 		    	<div class="welcome">
@@ -46,7 +68,7 @@
 	{% if not request.user.is_authenticated %}
 		{% block login_content %}{% endblock %}
 	{% else %}
-	<div class="fullContainer">
+	<div class="fullContainer marginTop60">
 		{% block content %}{% endblock %}
 	</div>
 	{% endif %}

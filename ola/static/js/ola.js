@@ -1,7 +1,7 @@
 var ola = angular.module('ola', []);
 
 // create angular controller
-ola.controller('OlaFormController', function($scope, $http) {
+ola.controller('RegistrationFormController', function($scope, $http) {
     $scope.form_data = {};
     // function to submit the form after all validation has occurred            
     $scope.validate_and_proceed = function(isValid, tab, callback) {
@@ -9,8 +9,8 @@ ola.controller('OlaFormController', function($scope, $http) {
         if (isValid) {
             if (tab == 3) {
                 $http.post(
-                    '/api/data', 
-                    [$scope.form_data, 'do_registration', 'subscriber'], 
+                    '/api/subscriber',
+                    [$scope.form_data, 'do_registration'],
                     {'responseType' : 'json'}
                 ).success(function(data, status, headers, config) {
                   // this callback will be called asynchronously

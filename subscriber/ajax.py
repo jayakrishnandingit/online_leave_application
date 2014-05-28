@@ -1,7 +1,9 @@
 from ola.common.ajax import JSONParser
+from ola.common.permissions import GROUP_NAME_MAP
 from client.forms import ClientForm
 from forms import SubscriberCreationForm
 from models import Subscriber
+from django.contrib.auth.models import Group
 from django.contrib.auth.forms import UserCreationForm
 
 class SubscriberAjaxHandler(JSONParser):
@@ -20,6 +22,8 @@ class SubscriberAjaxHandler(JSONParser):
 			user.is_active = True
 			user.is_staff = False
 			user.save()
+			user_groups = [Group.objects.get(name__exact=GROUP_NAME_MAP['COMPANY_ADMIN'])]
+			user.groups.add(*user_groups)
 			subscriber = Subscriber(
 				user=user,
 				client=client,
