@@ -30,9 +30,9 @@ class LeavePolicy(models.Model):
 class Leave(models.Model):
 	start = models.DateTimeField()
 	end = models.DateTimeField()
-	# this will be pulled from user group @see SubscriberGroup
 	type_of_leave = models.ForeignKey(LeaveType, related_name='leave_leave_type')
 	requester = models.ForeignKey(Subscriber, related_name='leave_requester')
 	approver = models.ForeignKey(Subscriber, related_name='leave_approver')
 	status = models.IntegerField()
+	comments = models.TextField(null=True)
 	created_on = models.DateTimeField(auto_now_add=True)
