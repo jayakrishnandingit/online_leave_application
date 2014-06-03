@@ -1,0 +1,128 @@
+{% extends 'ola/layout.html' %}
+{% block head %}
+	<script>
+		$(document).ready(function () {
+			$.each($('ul#main-nav-ul li'), function (index, elem) {
+				$(elem).removeClass('active');
+			});
+			$('#nav-settings').addClass('active');
+		});
+	</script>
+{% endblock %}
+{% block content %}
+<div class="container">
+	{% if auth_group.COMPANY_ADMIN %}
+		<a class="btn btn-sm btn-success floatRight" href="{% url 'create_subscriber' %}">
+		  	<i class="fa fa-plus fa-fw"></i>
+		  	Create User
+		</a>
+	{% endif %}
+	<form id="subscriber-edit-form" class="form-horizontal" role="form" ng-controller="SubscriberEditFormController">
+		<legend>
+			Account Settings
+		</legend>
+		<div class="form-group">
+			<label class="control-label custom col-xs-4 requiredField">First Name</label>
+			<div class="col-xs-5">
+		  		{{subscriber_change_form.first_name}}
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label custom col-xs-4 requiredField">Last Name</label>
+			<div class="col-xs-5">
+		  		{{subscriber_change_form.last_name}}
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label custom col-xs-4 requiredField">Email</label>
+			<div class="col-xs-5">
+		  		{{subscriber_change_form.email}}
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label custom col-xs-4 requiredField">Username</label>
+			<div class="col-xs-5 without-form-control">
+		  		{{user_change_form.username}}
+			</div>
+		</div>
+		{% if auth_group.COMPANY_ADMIN %}
+			<div class="form-group">
+				<label class="control-label custom col-xs-4 requiredField">Leave Remaining</label>
+				<div class="col-xs-5 without-form-control">
+			  		{{subscriber_change_form.no_of_leave_remaining}}
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label custom col-xs-4 requiredField">Role</label>
+				<div class="col-xs-5 without-form-control">
+			  		{{subscriber_change_form.role}}
+				</div>
+			</div>
+		{% endif %}
+		<div class="form-group">
+			<div class="col-xs-10">
+				<button class="btn btn-primary floatRight">Save</button>
+			</div>
+		</div>
+	</form>
+</div>
+<div class="container">
+	{% ifequal user.id request.user.id %}
+		<form id="password-self-edit-form" class="form-horizontal" role="form" ng-controller="PasswordEditFormController">
+			<legend>Change Password</legend>
+			<div class="form-group">
+				<label class="control-label custom col-xs-4 requiredField">Old Password</label>
+				<div class="col-xs-5">
+			  		<input class="form-control" type="text" id="id_old_password" name="old_password">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label custom col-xs-4 requiredField">New Password</label>
+				<div class="col-xs-5">
+			  		<input class="form-control" type="text" id="id_new_password1" name="new_password1">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label custom col-xs-4 requiredField">Password Again</label>
+				<div class="col-xs-5">
+			  		<input class="form-control" type="text" id="id_new_password2" name="new_password2">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-xs-10">
+					<button class="btn btn-primary floatRight">Save</button>
+				</div>
+			</div>
+		</form>
+	{% else %}
+		{% if auth_group.COMPANY_ADMIN %}
+			<form id="password-amin-edit-form" class="form-horizontal" role="form" ng-controller="PasswordEditFormController">
+			<legend>Change Password</legend>
+			<div class="form-group">
+				<label class="control-label custom col-xs-4 requiredField">New Password</label>
+				<div class="col-xs-5">
+			  		<input class="form-control" type="text" id="id_password1" name="password1">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label custom col-xs-4 requiredField">Password Again</label>
+				<div class="col-xs-5">
+			  		<input class="form-control" type="text" id="id_password2" name="password2">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-xs-10">
+					<button class="btn btn-primary floatRight">Save</button>
+				</div>
+			</div>
+		</form>
+		{% endif %}
+	{% endifequal %}
+</div>
+<script>
+	$('#id_role').chosen({
+		no_results_text: 'Oops, nothing found!',
+		width: '45%'
+	});
+</script>
+{% endblock %}

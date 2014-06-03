@@ -86,6 +86,10 @@ ul.navbar-nav li.active a, ul.navbar-nav li.active a i {
   border-bottom-color: transparent;
 }
 
+.nav .open a, .nav .open a:hover, .nav .open a:focus {
+  color: #333;
+}
+
 .badge.red, .badge.profile, .badge.blue {
     font-size: 12px;
     background-color: #CC0000;
@@ -568,6 +572,45 @@ div.notificationsNav ul::-webkit-scrollbar-thumb{
 
 div.notificationsNav ul::-webkit-scrollbar-thumb:hover{
     background-color: #15adff;
+}
+
+.filterMain{
+    width: 98%;
+    float: left;
+    margin: 1%;
+}
+
+.filterRight {
+    float: right;
+   /* width: 30%;
+    display: inline-block;
+    margin-bottom: 15px;*/
+    width: auto;
+    margin: 1%;
+}
+
+.filterSub {
+    text-decoration: none;
+    color: #15ADFF;
+    padding: 0 3% 0 3%;
+}
+
+.filterRight .current {
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+}
+
+.filterLeft {
+    float: left;
+    width: auto;
+    margin: 1%;
+}
+
+.filterLeft .current {
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
 }
 /*****************************************************************************/
 .floatRight {

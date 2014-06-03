@@ -1,0 +1,72 @@
+{% extends 'ola/layout.html' %}
+{% block head %}
+	<script>
+		$(document).ready(function () {
+			$.each($('ul#main-nav-ul li'), function (index, elem) {
+				$(elem).removeClass('active');
+			});
+			$('#nav-settings').addClass('active');
+		});
+	</script>
+{% endblock %}
+{% block content %}
+	<div ng-app="subscriber-list" class="container" ng-controller="SubscriberListController">
+		{% if auth_group.COMPANY_ADMIN %}
+			<div class="btn-group floatRight marginAll1P">
+			  <a class="btn btn-sm btn-success" href="{% url 'create_subscriber' %}">
+			  	<i class="fa fa-plus"></i>
+			  	Create User
+			  </a>
+			  <a class="btn btn-sm signup-btn" href="#">
+			  	<i class="fa fa-group"></i>
+			  	Invite Users
+			  </a>
+			</div>
+		{% endif %}
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Email</th>
+					<th>Leaves Remaining</th>
+				</tr>
+			</thead>
+			<tbody id="subscriber-list-container">
+				<tr ng-repeat="subscriber in subscribers">
+					{% verbatim %}
+						<td>{{subscriber.user.name}}</td>
+						<td>{{subscriber.user.email}}</td>
+						<td>{{subscriber.no_of_leave_remaining}}</td>
+					{% endverbatim %}
+				</tr>
+			</tbody>
+		</table>
+		<div id="subscriber-pagination-container" class="filterMain">
+			<div class="filterLeft">
+	          <span class="labels">Showing page</span> 
+	          <input id="currentPageInput" ng-model="current_page_no" type="text" class="inp35" />
+	          <span class="labels">of</span>
+	          {% verbatim %}
+	          	<span>{{num_of_pages}}</span>
+	          {% endverbatim %}
+	        </div>
+	        <div class="filterLeft">
+	          <input id="noOfRecordsInput" ng-model="nor" type="text" class="inp35" />
+	          <span class="labels">Records per Page</span>
+	        </div>
+	        <div class="filterRight">
+	            <div class="customIconContainer">
+	              <a id="prevPage" ng-click="get_prev_page()" href="javascript:void(0);">
+	                <i title="Previous Page" class="fa fa-arrow-left fa-fw"></i>
+	              </a>
+	              <a id="deviceNextPage" ng-click="get_next_page()" href="javascript:void(0);">
+	                <i title="Next Page" class="fa fa-arrow-right fa-fw"></i>
+	              </a>
+	            </div>
+	        </div>
+		</div>
+	</div>
+	<script>
+
+	</script>
+{% endblock %}
