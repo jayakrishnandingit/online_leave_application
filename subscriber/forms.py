@@ -8,7 +8,7 @@ class SubscriberCreationForm(forms.Form):
 		widget = forms.TextInput(
 			attrs = {
 				'class' : 'form-control', 
-				'ng-model':'subscriber.user.first_name', 
+				'ng-model':'form_data.first_name', 
 				'ng-required' : 'true'
 			}
 		), 
@@ -18,7 +18,7 @@ class SubscriberCreationForm(forms.Form):
 		widget = forms.TextInput(
 			attrs = {
 				'class' : 'form-control', 
-				'ng-model':'subscriber.user.last_name', 
+				'ng-model':'form_data.last_name', 
 				'ng-required' : 'true'
 			}
 		), 
@@ -28,7 +28,7 @@ class SubscriberCreationForm(forms.Form):
 		widget = forms.EmailInput(
 			attrs = {
 				'class' : 'form-control', 
-				'ng-model':'subscriber.user.email', 
+				'ng-model':'form_data.email', 
 				'ng-required' : 'true'
 			}
 		), 
@@ -38,7 +38,7 @@ class SubscriberCreationForm(forms.Form):
 		widget=forms.TextInput(
 			attrs={
 				'class' : 'form-control', 
-				'ng-model':'subscriber.no_of_leave_remaining', 
+				'ng-model':'form_data.no_of_leave_remaining', 
 				'ng-required' : 'true',
 				'ng-pattern' : '/^[\d\.]+$/'
 			}
@@ -50,7 +50,7 @@ class SubscriberCreationForm(forms.Form):
 		widget=forms.Select(
 			attrs={
 				'class' : 'form-control',
-				'ng-model' : 'subscriber.group.id',
+				'ng-model' : 'form_data.role',
 				'ng-required' : 'true',
 				'ng-selected' : 'subscriber.group.id',
 			}
@@ -60,9 +60,10 @@ class SubscriberCreationForm(forms.Form):
 	hidden_user = StrippedCharField(
 		widget=forms.HiddenInput(
 			attrs={
-				'ng-model' : 'subscriber.id'
+				'ng-model' : 'form_data.id'
 			}
-		)
+		),
+		required=False
 	)
 	is_company_admin = False
 	logged_in_employee = None
@@ -86,8 +87,8 @@ class SubscriberCreationForm(forms.Form):
 
 	def clean_email(self):
 		user_with_email = User.objects.filter(email__exact=self.cleaned_data['email']).first()
-		if user_changed:
-			if user_with_email and user_with_email.id != user_changed.id:
+		if self.user_changed:
+			if user_with_email and user_with_email.id != self.user_changed.id:
 				raise ValidationError('User with email already exists.')
 		elif user_with_email:
 			raise ValidationError('User with email already exists.')

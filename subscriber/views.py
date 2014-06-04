@@ -57,6 +57,31 @@ class SubscriberAPI(View):
 		response['Content-Type'] = 'application/json'
 		return response
 
+class SubscriberRegistrationView(View):
+	def get(self, request):
+		context = {
+			'user_creation_form' : UserCreationForm(),
+			'subscriber_creation_form' : SubscriberCreationForm(),
+			'client_form' : ClientForm()
+		}
+		return render(request, 'registration/registration.html', context)
+
+	def post(self, request):
+		args = json.loads(request.body)
+		ajaxMainClass = SubscriberAjaxHandler()
+		ajaxMainClass.httpRequest = request
+		ajaxMainClass.user = request.user
+		funtionToCall = getattr(ajaxMainClass, args.pop(), None)
+		if not funtionToCall:
+			return http.Http404
+
+		responseValues = funtionToCall(*args)
+		response = http.HttpResponse()
+		response.status_code = 200
+		response.write(responseValues)
+		response['Content-Type'] = 'application/json'
+		return response
+
 class SubscriberCreateView(View):
 	def get(self, request):
 		auth_group = UserGroupManager.check_user_group(request.user)

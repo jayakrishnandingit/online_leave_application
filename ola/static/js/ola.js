@@ -9,7 +9,7 @@ ola.controller('RegistrationFormController', function($scope, $http) {
         if (isValid) {
             if (tab == 3) {
                 $http.post(
-                    '/subscriber',
+                    '/subscriber/registration',
                     [$scope.form_data, 'do_registration'],
                     {'responseType' : 'json'}
                 ).success(function(data, status, headers, config) {
@@ -40,6 +40,7 @@ ola.controller('RegistrationFormController', function($scope, $http) {
 
 ola.controller('SubscriberEditFormController', function($scope, $http) {
     $scope.subscriber = {};
+    $scope.form_data = {};
     $scope.get_subscriber = function(user_id) {
         $http.get(
             '/subscriber/' + user_id,
@@ -50,6 +51,12 @@ ola.controller('SubscriberEditFormController', function($scope, $http) {
           // this callback will be called asynchronously
           // when the response is available
             $scope.subscriber = data.subscriber;
+            $scope.form_data['first_name'] = data.subscriber.user.first_name;
+            $scope.form_data['last_name'] = data.subscriber.user.last_name;
+            $scope.form_data['email'] = data.subscriber.user.email;
+            $scope.form_data['role'] = data.subscriber.group.id;
+            $scope.form_data['no_of_leave_remaining'] = data.subscriber.no_of_leave_remaining;
+            $scope.form_data['hidden_user'] = data.subscriber.user.id;
         }).error(function(data, status, headers, config) {
           // called asynchronously if an error occurs
           // or server returns response with an error status.

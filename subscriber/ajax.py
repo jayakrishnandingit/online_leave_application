@@ -12,7 +12,6 @@ class SubscriberAjaxHandler(JSONParser):
 		client_form = ClientForm(form_values)
 		user_form = UserCreationForm(form_values)
 		subscriber_form = SubscriberCreationForm(form_values)
-		subscriber_form.need_to_check_leave = False
 		if client_form.is_valid() and user_form.is_valid() and subscriber_form.is_valid():
 			client = client_form.save(commit=False)
 			client.payment_status = 0 # no payment, not so far.
