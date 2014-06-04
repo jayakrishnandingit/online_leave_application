@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.urlresolvers import reverse
+from django.utils.safestring import mark_safe
 from ola.common.models import BASIC_TYPES
 from django.contrib.auth.models import User
 from client.models import Client, Team
@@ -30,6 +32,13 @@ class Subscriber(models.Model):
 			}
 		return 'Admin'
 
+	def get_absolute_url(self):
+		return reverse('subscriber_details', args=[str(self.user.id)])
+
+	@property
+	def profile_url(self):
+		return mark_safe('<a class="profile_link" href="%s">%s</a>' % (self.get_absolute_url(), self.name))
+
 	def serialize(self, maxDepth=1, requestPassword=False):
 		import datetime
 		from django.contrib.auth.models import User
@@ -55,6 +64,8 @@ class Subscriber(models.Model):
 			else:
 				pass
 		output['group'] = self.showGroup
+		output['profile_path'] = self.get_absolute_url()
+		output['profile_url'] = self.profile_url
 		return output
 
 	def _user(self, value, requestPassword):

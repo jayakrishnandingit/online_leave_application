@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from views import SubscriberAPI, SubscriberView, SubscriberDetailsView, SubscriberCreateView
+from views import SubscriberAPI, SubscriberView, SubscriberDetailsFormView, SubscriberDetailsAPI, SubscriberCreateView
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import admin
 admin.autodiscover()
@@ -11,5 +11,6 @@ urlpatterns = patterns('subscriber',
 	url(r'^$', csrf_exempt(SubscriberAPI.as_view())),
 	url(r'^/create$', SubscriberCreateView.as_view(), name='create_subscriber'),
 	url(r'^/view$', SubscriberView.as_view(), name='view_subscribers'),
-	url(r'^/([\w]+)$', SubscriberDetailsView.as_view(), name='subscriber_details'),
+	url(r'^/([\w]+)/details$', SubscriberDetailsFormView.as_view(), name='subscriber_details'),
+	url(r'^/([\w]+)$', csrf_exempt(SubscriberDetailsAPI.as_view())),
 )

@@ -463,6 +463,10 @@ ul#breadcrumbs-one {
   color: #999999;
 }
 
+input[type="text"].inp35 {
+    width: 35px;
+}
+
 .error {
     width: auto;
     color: red;

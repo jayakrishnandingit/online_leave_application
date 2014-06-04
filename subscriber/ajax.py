@@ -3,7 +3,7 @@ from ola.common.permissions import UserGroupManager, GROUP_NAME_MAP
 from client.forms import ClientForm
 from forms import SubscriberCreationForm
 from models import Subscriber
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.contrib.auth.forms import UserCreationForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger, InvalidPage
 
@@ -83,5 +83,51 @@ class SubscriberAjaxHandler(JSONParser):
 			next_page_number=nextPageNo,
 			current_page_number=current_page_number,
 			num_of_pages=num_of_pages,
-			nor=no_of_records
+			no_of_records=no_of_records
+		)
+
+	def get_user(self, user_id):
+		logged_in_employee = Subscriber.objects.get(user=self.user)
+		subscriber_to_get = Subscriber.objects.get(user__id__exact=int(user_id))
+		is_company_admin = UserGroupManager.is_company_admin(self.user)
+		if logged_in_employee.id != subscriber_to_get.id:
+			if not is_company_admin:
+				raise UnauthorizedException('Access Violation')
+		return self.respond(subscriber=subscriber_to_get.serialize())
+
+	def user_edit(self, form_values):
+		logged_in_employee = Subscriber.objects.get(user=self.user)
+		subscriber_to_save = Subscriber.objects.get(user__id__exact=int(self.user_id))
+		is_company_admin = UserGroupManager.is_company_admin(self.user)
+		if logged_in_employee.id != subscriber_to_save.id:
+			if not is_company_admin:
+				raise UnauthorizedException('Access Violation')
+
+		subscriber_form = SubscriberCreationForm(data=form_values)
+		subscriber_form.is_company_admin = is_company_admin
+		subscriber_form.logged_in_employee = logged_in_employee
+		subscriber_form.user_changed = subscriber_to_save.user
+		user_form = UserChangeForm(form_values, instance=subscriber_to_save.user)
+		if subscriber_form.is_valid() and user_form.is_valid():
+			if is_company_admin:
+				subscriber_to_save.update(
+					no_of_leave_remaining=subscriber_form.cleaned_data['no_of_leave_remaining']
+				)
+				subscriber_to_save.user.groups.clear()
+				subscriber_to_save.user.groups.add(*[Group.objects.get(pk=subscriber_form.cleaned_data['role'])])
+			# the below portion is common for all users.
+			subscriber_to_save.user.update(
+				first_name=subscriber_form.cleaned_data['first_name'],
+				last_name=subscriber_form.cleaned_data['last_name'],
+				email=subscriber_form.cleaned_data['email'],
+				username=user_form.cleaned_data['username']
+			)
+			return self.respond(
+				is_saved=True,
+				saved_values=form_values
+			)
+		return self.respond(
+			is_saved=False,
+			subscriber_form_errors=subscriber_form.errors,
+			user_form_errors=user_form.errors
 		)

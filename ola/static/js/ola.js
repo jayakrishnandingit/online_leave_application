@@ -36,7 +36,40 @@ ola.controller('RegistrationFormController', function($scope, $http) {
         }
     };
 
-}).directive('passwordCheck', ['$parse', function($parse) {
+});
+
+ola.controller('SubscriberEditFormController', function($scope, $http) {
+    $scope.subscriber = {};
+    $scope.get_subscriber = function(user_id) {
+        $http.get(
+            '/subscriber/' + user_id,
+            {
+                'responseType' : 'json',
+            }
+        ).success(function(data, status, headers, config) {
+          // this callback will be called asynchronously
+          // when the response is available
+            $scope.subscriber = data.subscriber;
+        }).error(function(data, status, headers, config) {
+          // called asynchronously if an error occurs
+          // or server returns response with an error status.
+          console.log(data);
+        });
+    }
+    $scope.get_subscriber(user_id);
+    // function to submit the form after all validation has occurred            
+    $scope.validate_and_proceed = function(isValid) {
+        // check to make sure the form is completely valid
+        if (isValid) {
+            return;
+        } else {
+            $('#formError').show();
+        }
+    };
+
+});
+
+ola.directive('passwordCheck', ['$parse', function($parse) {
     return {
         restrict: 'A',
         require: 'ngModel',
@@ -64,6 +97,7 @@ ola.controller('SubscriberListController', function($scope, $http) {
     $scope.prev_page_no = 1;
     $scope.current_page_no = 1;
     $scope.next_page_no = 1;
+    $scope.nop = 1;
     $scope.nor = 10;
     $scope.fn = 'get_all';
     $scope.get_subscribers = function(page_no, no_of_records, show_all) {
@@ -80,18 +114,23 @@ ola.controller('SubscriberListController', function($scope, $http) {
             $scope.current_page_no = data.current_page_number;
             $scope.next_page_no = data.next_page_number;
             $scope.prev_page_no = data.prev_page_number;
-            $scope.nor = data.nor;
+            $scope.nop = data.num_of_pages;
+            $scope.nor = data.no_of_records;
         }).error(function(data, status, headers, config) {
           // called asynchronously if an error occurs
           // or server returns response with an error status.
           console.log(data);
         });
-    }($scope.current_page_no, $scope.nor, 0);
+    }
+    $scope.get_subscribers($scope.current_page_no, $scope.nor, 0);
     $scope.get_next_page = function () {
         $scope.get_subscribers($scope.next_page_no, $scope.nor, 0);
     }
     $scope.get_prev_page = function () {
         $scope.get_subscribers($scope.prev_page_no, $scope.nor, 0);
+    }
+    $scope.get_page_change = function () {
+        $scope.get_subscribers($scope.current_page_no, $scope.nor, 0);
     }
 });
 

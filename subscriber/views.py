@@ -86,11 +86,11 @@ class SubscriberView(View):
 		}
 		return render(request, 'subscriber/subscribers.html', context)
 
-class SubscriberDetailsView(View):
+class SubscriberDetailsFormView(View):
 	def get(self, request, user_id):
 		auth_group = UserGroupManager.check_user_group(request.user)
-		user = User.objects.get(pk=user_id)
-		subscriber = Subscriber.objects.get(user=user)
+		user = User.objects.get(pk=int(user_id))
+		subscriber = Subscriber.objects.get(user__id__exact=int(user_id))
 		logged_in_employee = Subscriber.objects.get(user=request.user)
 		if logged_in_employee.id != subscriber.id:
 			if not UserGroupManager.is_company_admin(request.user):
@@ -98,22 +98,45 @@ class SubscriberDetailsView(View):
 				raise UnauthorizedException('Access Violation')
 		password_change_form = PasswordChangeForm(user=request.user)
 		if UserGroupManager.is_company_admin(request.user):
-			password_change_form = AdminPasswordChangeForm(user=request.user)
+			password_change_form = AdminPasswordChangeForm(user=user)
 		context = {
 			'auth_group' : auth_group,
 			'password_change_form' : password_change_form,
-			'subscriber_change_form' : SubscriberCreationForm(
-				initial={
-					'first_name' : request.user.first_name,
-					'last_name' : request.user.last_name,
-					'email' : request.user.email,
-					'no_of_leave_remaining' : subscriber.no_of_leave_remaining,
-					'role' : request.user.groups.get().id
-				}
-			),
-			'user_change_form' : UserChangeForm(instance=request.user),
+			'subscriber_change_form' : SubscriberCreationForm(),
+			'user_change_form' : UserChangeForm(),
 			'logged_in_employee' : logged_in_employee,
-			'user' : user,
-			'subscriber' : subscriber
+			'user_id' : user_id
 		}
 		return render(request, 'subscriber/account_settings.html', context)
+
+class SubscriberDetailsAPI(View):
+	def get(self, request, user_id):
+		ajaxMainClass = SubscriberAjaxHandler()
+		ajaxMainClass.httpRequest = request
+		ajaxMainClass.user = request.user
+		funtionToCall = getattr(ajaxMainClass, 'get_user', None)
+		if not funtionToCall:
+			return http.Http404
+
+		responseValues = funtionToCall(user_id)
+		response = http.HttpResponse()
+		response.status_code = 200
+		response.write(responseValues)
+		response['Content-Type'] = 'application/json'
+		return response
+
+	def post(self, request):
+		args = json.loads(request.body)
+		ajaxMainClass = SubscriberAjaxHandler()
+		ajaxMainClass.httpRequest = request
+		ajaxMainClass.user = request.user
+		funtionToCall = getattr(ajaxMainClass, args.pop(), None)
+		if not funtionToCall:
+			return http.Http404
+
+		responseValues = funtionToCall(*args)
+		response = http.HttpResponse()
+		response.status_code = 200
+		response.write(responseValues)
+		response['Content-Type'] = 'application/json'
+		return response

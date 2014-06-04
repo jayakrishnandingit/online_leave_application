@@ -89,6 +89,17 @@ function setFormFieldValues(jsonObj, formId) {
 	});
 }
 
+function getFormFieldValues(formId) {
+	var jsonObj = {};
+	$.each($('#' + formId + ' :input').not(':input[type=button], :input[type=submit], :input[type=reset]'), function(index, element) {
+		jsonObj[$(element).attr('name')] = $(element).val();
+	});
+	$.each($('#' + formId + ' select'), function(index, element) {
+		jsonObj[$(element).attr('name')] = $(element).val();
+	});
+	return jsonObj;
+}
+
 function validateForm(formId, region) {
 	var flag = false;
 	var jsonObj = {};

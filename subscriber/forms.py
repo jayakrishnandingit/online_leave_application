@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from ola.common.forms import StrippedCharField
 from models import Subscriber
 
@@ -8,7 +8,7 @@ class SubscriberCreationForm(forms.Form):
 		widget = forms.TextInput(
 			attrs = {
 				'class' : 'form-control', 
-				'ng-model':'form_data.first_name', 
+				'ng-model':'subscriber.user.first_name', 
 				'ng-required' : 'true'
 			}
 		), 
@@ -18,7 +18,7 @@ class SubscriberCreationForm(forms.Form):
 		widget = forms.TextInput(
 			attrs = {
 				'class' : 'form-control', 
-				'ng-model':'form_data.last_name', 
+				'ng-model':'subscriber.user.last_name', 
 				'ng-required' : 'true'
 			}
 		), 
@@ -28,7 +28,7 @@ class SubscriberCreationForm(forms.Form):
 		widget = forms.EmailInput(
 			attrs = {
 				'class' : 'form-control', 
-				'ng-model':'form_data.email', 
+				'ng-model':'subscriber.user.email', 
 				'ng-required' : 'true'
 			}
 		), 
@@ -38,30 +38,39 @@ class SubscriberCreationForm(forms.Form):
 		widget=forms.TextInput(
 			attrs={
 				'class' : 'form-control', 
-				'ng-model':'form_data.no_of_leave_remaining', 
-				'ng-required' : 'false'	
+				'ng-model':'subscriber.no_of_leave_remaining', 
+				'ng-required' : 'true',
+				'ng-pattern' : '/^[\d\.]+$/'
 			}
 		),
 		required=False
 	)
 	role = forms.ChoiceField(
-		choices=[('', '')] + [(str(grp.id), str(grp.name)) for grp in Group.objects.all()],
+		choices=[('', 'Select Role')] + [(str(grp.id), str(grp.name)) for grp in Group.objects.all()],
 		widget=forms.Select(
 			attrs={
 				'class' : 'form-control',
-				'ng-model' : 'form_data.role',
-				'ng-required' : 'true'
+				'ng-model' : 'subscriber.group.id',
+				'ng-required' : 'true',
+				'ng-selected' : 'subscriber.group.id',
 			}
 		),
-		required=True
+		required=False
 	)
-	need_to_check_leave = False
+	hidden_user = StrippedCharField(
+		widget=forms.HiddenInput(
+			attrs={
+				'ng-model' : 'subscriber.id'
+			}
+		)
+	)
+	is_company_admin = False
 	logged_in_employee = None
 	user_changed = None
 	auth_group = None
 
 	def clean_no_of_leave_remaining(self):
-		if need_to_check_leave:
+		if self.is_company_admin:
 			if self.logged_in_employee.user.id != self.user_changed.id:
 				if not self.cleaned_data['no_of_leave_remaining'] and self.cleaned_data['no_of_leave_remaining'] != 0:
 					raise ValidationError('This field is required.')
@@ -69,3 +78,17 @@ class SubscriberCreationForm(forms.Form):
 				raise ValidationError('Invalid Entry')
 		return self.cleaned_data['no_of_leave_remaining']
 
+	def clean_role(self):
+		if self.is_company_admin:
+			if not self.cleaned_data['role']:
+				raise ValidationError('This field is required.')
+		return self.cleaned_data['role']
+
+	def clean_email(self):
+		user_with_email = User.objects.filter(email__exact=self.cleaned_data['email']).first()
+		if user_changed:
+			if user_with_email and user_with_email.id != user_changed.id:
+				raise ValidationError('User with email already exists.')
+		elif user_with_email:
+			raise ValidationError('User with email already exists.')
+		return self.cleaned_data['email']
