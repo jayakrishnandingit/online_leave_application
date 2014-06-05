@@ -12,15 +12,21 @@
 {% endblock %}
 {% block content %}
 <div class="container" ng-controller="SubscriberEditFormController">
-	<div id="formError" class="alert alert-danger">
-		Oops! Please correct the below error to proceed.
-	</div>
 	{% if auth_group.COMPANY_ADMIN %}
 		<a class="btn btn-sm btn-success floatRight" href="{% url 'create_subscriber' %}">
 		  	<i class="fa fa-plus fa-fw"></i>
 		  	Create User
 		</a>
+		<br clear="all" />
 	{% endif %}
+	<div ng-show="edit_success" class="alert alert-success alert-dismissable">
+	  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	  <strong>Great!</strong> New changes are applied.
+	</div>
+	<div ng-show="!edit_success && subscriberEditForm.$invalid" class="alert alert-danger">
+		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	  	<strong>Oops!</strong> Please correct the errors to proceed.
+	</div>
 	<form id="subscriber-edit-form" name="subscriberEditForm" class="form-horizontal" role="form" novalidate action="javascript:void(0);" method="POST">
 		<legend>
 			Account Settings
@@ -56,7 +62,7 @@
 		<div class="form-group">
 			<label class="control-label custom col-xs-4 requiredField">Username</label>
 			<div class="col-xs-5">
-		  		<input type="text" name="username" id="id_username" class="form-control" ng-model="subscriber.user.username" required />
+		  		<input type="text" name="username" id="id_username" class="form-control" ng-model="form_data.username" required />
 		  		<div ng-show="subscriberEditForm.username.$invalid && subscriberEditForm.username.$dirty">
 					<span ng-show="subscriberEditForm.username.$error.required" class="error">
 						Required.
@@ -67,7 +73,7 @@
 		{% if auth_group.COMPANY_ADMIN %}
 			<div class="form-group">
 				<label class="control-label custom col-xs-4 requiredField">Leave Remaining</label>
-				<div class="col-xs-5 without-form-control">
+				<div class="col-xs-5">
 			  		{{subscriber_change_form.no_of_leave_remaining}}
 			  		<span ng-show="subscriberEditForm.no_of_leave_remaining.$invalid && subscriberEditForm.no_of_leave_remaining.$dirty" class="error">
 			  			<span ng-show="subscriberEditForm.no_of_leave_remaining.$error.required" class="error">
@@ -85,6 +91,23 @@
 			  		{{subscriber_change_form.role}}
 				</div>
 			</div>
+			<div class="form-group">
+				<label class="control-label custom col-xs-4">Account Status</label>
+				<div class="col-xs-5">
+			  		<input type="checkbox" name="is_active" id="id_is_active" class="form-control" ng-model="form_data.is_active" />
+			  		<br clear="all" />
+			  		<span class="help-block" ng-show="form_data.is_active">
+			  			<span class="alert alert-success">
+			  				Active account. User can Sign in.
+			  			</span>
+			  		</span>
+			  		<span class="help-block" ng-show="!form_data.is_active">
+			  			<span class="alert alert-danger">
+			  				Inactive account. User restricted from Signing in.
+			  			</span>
+			  		</span>
+				</div>
+			</div>
 		{% endif %}
 		<div class="form-group">
 			<div class="col-xs-10">
@@ -94,20 +117,29 @@
 		</div>
 	</form>
 </div>
-<div class="container">
+<div class="container" ng-controller="PasswordEditFormController">
+	<div ng-show="edit_success" class="alert alert-success alert-dismissable">
+	  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	  <strong>Great!</strong> Password changed successfully.
+	</div>
 	{% ifequal user.id request.user.id %}
 		<form id="password-self-edit-form" name="passwordSelfEditForm" class="form-horizontal" role="form" novalidate>
 			<legend>Change Password</legend>
 			<div class="form-group">
 				<label class="control-label custom col-xs-4 requiredField">Old Password</label>
 				<div class="col-xs-5">
-			  		<input ng-model="form_data.old_password" class="form-control" type="text" id="id_old_password" name="old_password" >
+			  		<input ng-model="form_data.old_password" class="form-control" type="password" id="id_old_password" name="old_password" >
+			  		<div ng-show="passwordSelfEditForm.old_password.$invalid && passwordSelfEditForm.old_password.$dirty">
+						<span ng-show="passwordSelfEditForm.old_password.$error.required" class="error">
+							Required.
+						</span>
+					</div>
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="control-label custom col-xs-4 requiredField">New Password</label>
 				<div class="col-xs-5">
-			  		<input class="form-control" type="text" id="id_new_password1" name="new_password1" password-check="form_data.new_password2" ng-model="form_data.new_password1" >
+			  		<input class="form-control" type="password" id="id_new_password1" name="new_password1" password-check="form_data.new_password2" ng-model="form_data.new_password1" >
 			  		<div ng-show="passwordSelfEditForm.new_password1.$invalid && passwordSelfEditForm.new_password1.$dirty">
 						<span ng-show="passwordSelfEditForm.new_password1.$error.required" class="error">
 							Required.
@@ -121,7 +153,7 @@
 			<div class="form-group">
 				<label class="control-label custom col-xs-4 requiredField">Password Again</label>
 				<div class="col-xs-5">
-			  		<input class="form-control" type="text" id="id_new_password2" name="new_password2" password-check="form_data.new_password1" ng-model="form_data.new_password2" >
+			  		<input class="form-control" type="password" id="id_new_password2" name="new_password2" password-check="form_data.new_password1" ng-model="form_data.new_password2" >
 			  		<div ng-show="passwordSelfEditForm.new_password2.$invalid && passwordSelfEditForm.new_password2.$dirty">
 						<span ng-show="passwordSelfEditForm.new_password2.$error.required" class="error">
 							Required.
@@ -134,29 +166,29 @@
 			</div>
 			<div class="form-group">
 				<div class="col-xs-10">
-					<button class="btn btn-primary floatRight" ng-disabled="passwordSelfEditForm.$invalid">Save</button>
+					<button class="btn btn-primary floatRight" ng-disabled="passwordSelfEditForm.$invalid" ng-click="validate_and_proceed(passwordSelfEditForm.$valid)">Save</button>
 				</div>
 			</div>
 		</form>
 	{% else %}
 		{% if auth_group.COMPANY_ADMIN %}
-			<form id="password-amin-edit-form" class="form-horizontal" role="form" novalidate>
+			<form id="password-admin-edit-form" name="passwordAdminEditForm" class="form-horizontal" role="form" novalidate>
 				<legend>Change Password</legend>
 				<div class="form-group">
 					<label class="control-label custom col-xs-4 requiredField">New Password</label>
 					<div class="col-xs-5">
-				  		<input class="form-control" type="text" id="id_password1" name="password1">
+				  		<input class="form-control" type="password" id="id_password1" name="password1">
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="control-label custom col-xs-4 requiredField">Password Again</label>
 					<div class="col-xs-5">
-				  		<input class="form-control" type="text" id="id_password2" name="password2">
+				  		<input class="form-control" type="password" id="id_password2" name="password2">
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="col-xs-10">
-						<button class="btn btn-primary floatRight">Save</button>
+						<button class="btn btn-primary floatRight" ng-click="validate_and_proceed(passwordAdminEditForm.$valid)" ng-disabled="passwordAdminEditForm.$invalid">Save</button>
 					</div>
 				</div>
 			</form>

@@ -41,6 +41,7 @@ ola.controller('RegistrationFormController', function($scope, $http) {
 ola.controller('SubscriberEditFormController', function($scope, $http) {
     $scope.subscriber = {};
     $scope.form_data = {};
+    $scope.edit_success = false;
     $scope.get_subscriber = function(user_id) {
         $http.get(
             '/subscriber/' + user_id,
@@ -51,12 +52,14 @@ ola.controller('SubscriberEditFormController', function($scope, $http) {
           // this callback will be called asynchronously
           // when the response is available
             $scope.subscriber = data.subscriber;
-            $scope.form_data['first_name'] = data.subscriber.user.first_name;
-            $scope.form_data['last_name'] = data.subscriber.user.last_name;
-            $scope.form_data['email'] = data.subscriber.user.email;
-            $scope.form_data['role'] = data.subscriber.group.id;
-            $scope.form_data['no_of_leave_remaining'] = data.subscriber.no_of_leave_remaining;
-            $scope.form_data['hidden_user'] = data.subscriber.user.id;
+            $scope.form_data['first_name'] = $scope.subscriber.user.first_name;
+            $scope.form_data['last_name'] = $scope.subscriber.user.last_name;
+            $scope.form_data['email'] = $scope.subscriber.user.email;
+            $scope.form_data['username'] = $scope.subscriber.user.username;
+            $scope.form_data['role'] = $scope.subscriber.group.id;
+            $scope.form_data['is_active'] = $scope.subscriber.user.is_active;
+            $scope.form_data['no_of_leave_remaining'] = $scope.subscriber.no_of_leave_remaining;
+            $scope.form_data['hidden_user'] = $scope.subscriber.user.id.toString();
         }).error(function(data, status, headers, config) {
           // called asynchronously if an error occurs
           // or server returns response with an error status.
@@ -68,7 +71,54 @@ ola.controller('SubscriberEditFormController', function($scope, $http) {
     $scope.validate_and_proceed = function(isValid) {
         // check to make sure the form is completely valid
         if (isValid) {
-            return;
+            $http.post(
+                '/subscriber/' + user_id,
+                [$scope.form_data, 'user_edit'],
+                {'responseType' : 'json'}
+            ).success(function(data, status, headers, config) {
+              // this callback will be called asynchronously
+              // when the response is available
+                $scope.edit_success = data.is_saved;
+                if (data.is_saved) {
+                    $scope.subscriber = data.subscriber;
+                }
+            }).error(function(data, status, headers, config) {
+              // called asynchronously if an error occurs
+              // or server returns response with an error status.
+              console.log(data);
+            });
+        } else {
+            $('#formError').show();
+        }
+    };
+
+});
+
+ola.controller('PasswordEditFormController', function($scope, $http) {
+    $scope.form_data = {};
+    $scope.edit_success = false;
+    // function to submit the form after all validation has occurred            
+    $scope.validate_and_proceed = function(isValid) {
+        // check to make sure the form is completely valid
+        if (isValid) {
+            $http.post(
+                '/subscriber/' + user_id,
+                [$scope.form_data, 'change_password'],
+                {'responseType' : 'json'}
+            ).success(function(data, status, headers, config) {
+              // this callback will be called asynchronously
+              // when the response is available
+                $scope.edit_success = data.is_saved;
+                $scope.form_data = {};
+                if (!data.is_saved) {
+                    alert('formError');
+                }
+            }).error(function(data, status, headers, config) {
+              // called asynchronously if an error occurs
+              // or server returns response with an error status.
+              alert('server error');
+              console.log(data);
+            });
         } else {
             $('#formError').show();
         }

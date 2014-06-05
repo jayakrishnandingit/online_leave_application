@@ -4,7 +4,7 @@
 	{% load staticfiles %}
 	<title>Sample App Angular{% block title %} {% endblock %}</title>
 	<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css"/>
-	<link rel="stylesheet" href="{% static 'font-awesome-4.0.3/css/font-awesome.css' %}" type="text/css"/>
+	<link rel="stylesheet" href="{% static 'font-awesome-4.1.0/css/font-awesome.css' %}" type="text/css"/>
 	<link rel="stylesheet" href="{% static 'css/ola.css' %}" type="text/css"/>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 	<script type="text/javascript" language="javascript" src="{% static 'js/bootstrap.js' %}"></script>
@@ -44,10 +44,28 @@
 						Settings <b class="caret"></b>
 					</a>
 					<ul class="dropdown-menu">
+						<li><a href="{% url 'subscriber_details' request.user.id %}">
+							<i class="fa fa-user fa-fw"></i>
+							My Account
+						</a></li>
 						{% if auth_group.COMPANY_ADMIN %}
-							<li><a href="{% url 'view_subscribers' %}">Manage Users</a></li>
+							<li><a href="{% url 'view_subscribers' %}">
+								<i class="fa fa-group fa-fw"></i>
+								Manage Users
+							</a></li>
+							<li><a href="#">
+								<i class="fa fa-book fa-fw"></i>
+								Leave Policy
+							</a></li>
+							<li><a href="#">
+								<i class="fa fa-university fa-fw"></i>
+								Manage Company
+							</a></li>
+							<li><a href="#">
+								<i class="fa fa-money fa-fw"></i>
+								Payment
+							</a></li>
 						{% endif %}
-						<li><a href="{% url 'subscriber_details' request.user.id %}">My Account</a></li>
 					</ul>
 				</li>
 		      </ul>

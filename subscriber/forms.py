@@ -46,7 +46,7 @@ class SubscriberCreationForm(forms.Form):
 		required=False
 	)
 	role = forms.ChoiceField(
-		choices=[('', 'Select Role')] + [(str(grp.id), str(grp.name)) for grp in Group.objects.all()],
+		choices=[('', '----Select Role----')] + [(str(grp.id), str(grp.name)) for grp in Group.objects.all()],
 		widget=forms.Select(
 			attrs={
 				'class' : 'form-control',

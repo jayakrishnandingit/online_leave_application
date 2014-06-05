@@ -4,7 +4,7 @@ from client.forms import ClientForm
 from forms import SubscriberCreationForm
 from models import Subscriber
 from django.contrib.auth.models import Group, User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm, AdminPasswordChangeForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger, InvalidPage
 
 class SubscriberAjaxHandler(JSONParser):
@@ -94,9 +94,9 @@ class SubscriberAjaxHandler(JSONParser):
 				raise UnauthorizedException('Access Violation')
 		return self.respond(subscriber=subscriber_to_get.serialize())
 
-	def user_edit(self, form_values):
+	def user_edit(self, form_values, user_id):
 		logged_in_employee = Subscriber.objects.get(user=self.user)
-		subscriber_to_save = Subscriber.objects.get(user__id__exact=int(self.user_id))
+		subscriber_to_save = Subscriber.objects.get(user__id__exact=int(user_id))
 		is_company_admin = UserGroupManager.is_company_admin(self.user)
 		if logged_in_employee.id != subscriber_to_save.id:
 			if not is_company_admin:
@@ -106,27 +106,43 @@ class SubscriberAjaxHandler(JSONParser):
 		subscriber_form.is_company_admin = is_company_admin
 		subscriber_form.logged_in_employee = logged_in_employee
 		subscriber_form.user_changed = subscriber_to_save.user
-		user_form = UserChangeForm(form_values, instance=subscriber_to_save.user)
+		# all fields in User model are required for UserChangeForm. Hence the addition.
+		form_values['date_joined'] = subscriber_to_save.user.date_joined
+		form_values['last_login'] = subscriber_to_save.user.last_login
+		user_form = UserChangeForm(
+			form_values,
+			instance=subscriber_to_save.user
+		)
 		if subscriber_form.is_valid() and user_form.is_valid():
+			user_to_save = user_form.save()
 			if is_company_admin:
-				subscriber_to_save.update(
-					no_of_leave_remaining=subscriber_form.cleaned_data['no_of_leave_remaining']
-				)
+				subscriber_to_save.no_of_leave_remaining=subscriber_form.cleaned_data['no_of_leave_remaining']
+				subscriber_to_save.save()
 				subscriber_to_save.user.groups.clear()
-				subscriber_to_save.user.groups.add(*[Group.objects.get(pk=subscriber_form.cleaned_data['role'])])
-			# the below portion is common for all users.
-			subscriber_to_save.user.update(
-				first_name=subscriber_form.cleaned_data['first_name'],
-				last_name=subscriber_form.cleaned_data['last_name'],
-				email=subscriber_form.cleaned_data['email'],
-				username=user_form.cleaned_data['username']
-			)
+				user_group = [Group.objects.get(pk=subscriber_form.cleaned_data['role'])]
+				subscriber_to_save.user.groups.add(*user_group)
 			return self.respond(
 				is_saved=True,
-				saved_values=form_values
+				subscriber=subscriber_to_save.serialize()
 			)
 		return self.respond(
 			is_saved=False,
 			subscriber_form_errors=subscriber_form.errors,
 			user_form_errors=user_form.errors
 		)
+
+	def change_password(self, form_values, user_id):
+		logged_in_employee = Subscriber.objects.get(user=self.user)
+		subscriber_to_save = Subscriber.objects.get(user__id__exact=int(user_id))
+		is_company_admin = UserGroupManager.is_company_admin(self.user)
+		if logged_in_employee.id != subscriber_to_save.id:
+			if not is_company_admin:
+				raise UnauthorizedException('Access Violation')
+
+		form = PasswordChangeForm(user=subscriber_to_save.user, data=form_values)
+		if logged_in_employee.id != subscriber_to_save.id and is_company_admin:
+			form = AdminPasswordChangeForm(user=subscriber_to_save.user, data=form_values)
+		if form.is_valid():
+			form.save()
+			return self.respond(is_saved=True)
+		return self.respond(is_saved=False, errors=form.errors)

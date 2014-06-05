@@ -13,14 +13,6 @@ from django.views.generic import View
 from constants import *
 
 # Create your views here.
-def register(request):
-	context = {
-		'user_creation_form' : UserCreationForm(),
-		'subscriber_creation_form' : SubscriberCreationForm(),
-		'client_form' : ClientForm()
-	}
-	return render(request, 'registration/registration.html', context)
-
 class SubscriberAPI(View):
 	def get(self, request):
 		page_no = int(request.GET.get('page_no', 1))
@@ -128,7 +120,7 @@ class SubscriberDetailsFormView(View):
 			'auth_group' : auth_group,
 			'password_change_form' : password_change_form,
 			'subscriber_change_form' : SubscriberCreationForm(),
-			'user_change_form' : UserChangeForm(),
+			'user_change_form' : UserChangeForm(instance=subscriber.user),
 			'logged_in_employee' : logged_in_employee,
 			'user_id' : user_id
 		}
@@ -150,7 +142,7 @@ class SubscriberDetailsAPI(View):
 		response['Content-Type'] = 'application/json'
 		return response
 
-	def post(self, request):
+	def post(self, request, user_id):
 		args = json.loads(request.body)
 		ajaxMainClass = SubscriberAjaxHandler()
 		ajaxMainClass.httpRequest = request
@@ -159,6 +151,7 @@ class SubscriberDetailsAPI(View):
 		if not funtionToCall:
 			return http.Http404
 
+		args.append(user_id)
 		responseValues = funtionToCall(*args)
 		response = http.HttpResponse()
 		response.status_code = 200
