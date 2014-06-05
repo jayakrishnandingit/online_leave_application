@@ -108,6 +108,40 @@
 			  		</span>
 				</div>
 			</div>
+		{% else %}
+			<div class="form-group">
+				<label class="control-label custom col-xs-4 requiredField">Leave Remaining</label>
+				<div class="col-xs-5">
+			  		{% verbatim %}
+			  			{{subscriber.no_of_leave_remaining}}
+			  		{% endverbatim %}
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label custom col-xs-4 requiredField">Role</label>
+				<div class="col-xs-5">
+					{% verbatim %}
+			  			{{subscriber.group.name}}
+			  		{% endverbatim %}
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label custom col-xs-4">Account Status</label>
+				<div class="col-xs-5">
+					{% verbatim %}
+			  			<span class="help-block" ng-show="form_data.is_active">
+				  			<span class="alert alert-success">
+				  				Active account.
+				  			</span>
+				  		</span>
+				  		<span class="help-block" ng-show="!form_data.is_active">
+				  			<span class="alert alert-danger">
+				  				Inactive account.
+				  			</span>
+				  		</span>
+			  		{% endverbatim %}
+				</div>
+			</div>
 		{% endif %}
 		<div class="form-group">
 			<div class="col-xs-10">
@@ -177,13 +211,29 @@
 				<div class="form-group">
 					<label class="control-label custom col-xs-4 requiredField">New Password</label>
 					<div class="col-xs-5">
-				  		<input class="form-control" type="password" id="id_password1" name="password1">
+				  		<input class="form-control" type="password" id="id_password1" name="password1" required ng-model="form_data.password1" password-check="form_data.password2">
+				  		<div ng-show="passwordAdminEditForm.password1.$invalid && passwordAdminEditForm.password1.$dirty">
+							<span ng-show="passwordAdminEditForm.password1.$error.required" class="error">
+								Required.
+							</span>
+							<span ng-show="passwordAdminEditForm.password1.$error.match" class="error">
+								Password Mismatch.
+							</span>
+						</div>
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="control-label custom col-xs-4 requiredField">Password Again</label>
 					<div class="col-xs-5">
-				  		<input class="form-control" type="password" id="id_password2" name="password2">
+				  		<input class="form-control" type="password" id="id_password2" name="password2"  required ng-model="form_data.password2" password-check="form_data.password1">
+				  		<div ng-show="passwordAdminEditForm.password2.$invalid && passwordAdminEditForm.password2.$dirty">
+							<span ng-show="passwordAdminEditForm.password2.$error.required" class="error">
+								Required.
+							</span>
+							<span ng-show="passwordAdminEditForm.password2.$error.match" class="error">
+								Password Mismatch.
+							</span>
+						</div>
 					</div>
 				</div>
 				<div class="form-group">

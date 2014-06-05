@@ -72,9 +72,8 @@ class SubscriberCreationForm(forms.Form):
 
 	def clean_no_of_leave_remaining(self):
 		if self.is_company_admin:
-			if self.logged_in_employee.user.id != self.user_changed.id:
-				if not self.cleaned_data['no_of_leave_remaining'] and self.cleaned_data['no_of_leave_remaining'] != 0:
-					raise ValidationError('This field is required.')
+			if not self.cleaned_data['no_of_leave_remaining'] and self.cleaned_data['no_of_leave_remaining'] != 0:
+				raise ValidationError('This field is required.')
 			if self.cleaned_data['no_of_leave_remaining'] < 0:
 				raise ValidationError('Invalid Entry')
 		return self.cleaned_data['no_of_leave_remaining']

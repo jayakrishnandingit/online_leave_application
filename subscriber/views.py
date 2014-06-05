@@ -122,6 +122,8 @@ class SubscriberDetailsFormView(View):
 			'subscriber_change_form' : SubscriberCreationForm(),
 			'user_change_form' : UserChangeForm(instance=subscriber.user),
 			'logged_in_employee' : logged_in_employee,
+			'user' : user,
+			'subscriber' : subscriber,
 			'user_id' : user_id
 		}
 		return render(request, 'subscriber/account_settings.html', context)

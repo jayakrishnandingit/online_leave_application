@@ -126,6 +126,39 @@ ola.controller('PasswordEditFormController', function($scope, $http) {
 
 });
 
+
+ola.controller('SubscriberCreateFormController', function($scope, $http) {
+    $scope.form_data = {};
+    // function to submit the form after all validation has occurred            
+    $scope.validate_and_proceed = function(isValid) {
+        // check to make sure the form is completely valid
+        if (isValid) {
+            $http.post(
+                '/subscriber',
+                [$scope.form_data, 'create_user'],
+                {'responseType' : 'json'}
+            ).success(function(data, status, headers, config) {
+              // this callback will be called asynchronously
+              // when the response is available
+                if (data.is_saved) {
+                    $scope.form_data = {};
+                    window.location.href=data.subscriber.profile_path;
+                } else {
+                    alert('formError');
+                }
+            }).error(function(data, status, headers, config) {
+              // called asynchronously if an error occurs
+              // or server returns response with an error status.
+              alert('server error');
+              console.log(data);
+            });
+        } else {
+            $('#formError').show();
+        }
+    };
+
+});
+
 ola.directive('passwordCheck', ['$parse', function($parse) {
     return {
         restrict: 'A',
