@@ -5,6 +5,7 @@
 	<title>Sample App Angular{% block title %} {% endblock %}</title>
 	<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css"/>
 	<link rel="stylesheet" href="{% static 'font-awesome-4.1.0/css/font-awesome.css' %}" type="text/css"/>
+	<link rel="stylesheet" href="{% static 'css/sticky-footer.css' %}" type="text/css"/>
 	<link rel="stylesheet" href="{% static 'css/ola.css' %}" type="text/css"/>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 	<script type="text/javascript" language="javascript" src="{% static 'js/bootstrap.js' %}"></script>
@@ -89,19 +90,25 @@
 	    {% endif  %}
 	  </div><!-- /.container-fluid -->
 	</nav>
-	{% if not request.user.is_authenticated %}
-		{% block login_content %}{% endblock %}
-	{% else %}
-	<div class="fullContainer marginTop60">
-		{% block content %}{% endblock %}
-	</div>
-	{% endif %}
-	<nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
-		<div class="container">
-			<p class="navbar-text navbar-right">
-				Designed and Developed by <code>ByteGeneration</code>. All rights reserved.
-			</p>
+	<div id="wrap">
+		{% if not request.user.is_authenticated %}
+			{% block login_content %}{% endblock %}
+		{% else %}
+		<div class="fullContainer">
+			{% block content %}{% endblock %}
 		</div>
-	</nav>
+		{% endif %}
+	</div>
+	<br clear="all" />
+	<div id="footer">
+		<nav class="navbar navbar-default">
+	      <div class="container">
+	        <p class="navbar-text navbar-right">
+	        	Designed and Developed by <code>ByteGeneration</code>.
+	        	All rights reserved.
+	        </p>
+	      </div>
+	    </nav>
+	</div>
 </body>
 </html>
