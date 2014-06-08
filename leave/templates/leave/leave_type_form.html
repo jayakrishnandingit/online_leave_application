@@ -1,0 +1,53 @@
+{% extends "ola/layout.html" %}
+{% block head %}
+	<script>
+		$(document).ready(function () {
+			$.each($('ul#main-nav-ul li'), function (index, elem) {
+				$(elem).removeClass('active');
+			});
+			$('#nav-leave-settings').addClass('active');
+		});
+	</script>
+{% endblock %}
+{% block content %}
+<div class="container" ng-controller="LeaveTypeFormController">
+	<legend>
+		Leave Type
+	</legend>
+	<div class="alert alert-warning">
+		You can manage your type of leaves here. 
+		<br clear="all">
+		Currently you can only add leave types through out your employees. 
+		<br clear="all">
+		Premium users can avail the option to enable leave types for particular employee groups.
+		<a class="btn signup-btn disabled">Upgrade Account</a>
+	</div>
+	<form name="{{form.name}}" class="form-horizontal" role="form" ng--repeat="form in forms" action="javascript:void(0);" method="POST">
+		<div class="form-group">
+			<label class="control-label custom col-xs-4 requiredField">Type of Leave</label>
+			<div class="col-xs-5">
+			<input type="text" name="type_of_leave" class="form-control" ng-model="form.fields.type_of_leave" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label custom col-xs-4 requiredField">No. of Leaves Allowed</label>
+			<div class="col-xs-5">
+		  		<input type="text" name="no_of_leave" class="form-control" ng-model="form.fields.no_of_leave" />
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="btn-group floatRight">
+				<a class="btn btn-primary" ng-click="validate_and_proceed(form.name.$valid)" ng-disabled="form.name.$invalid" ng-show="$last">
+					<i class="fa fa-save fa-lg"></i> Save
+				</a>
+				<a class="btn btn-success" ng-click="create_form($index)" ng-show="$last">
+					<i class="fa fa-plus fa-lg"></i> Add more
+				</a>
+				<a class="btn btn-danger" ng-click="delete_form($index)" ng-hide="$first">
+					<i class="fa fa-trash-o fa-lg"></i> Delete
+				</a>
+			</div>
+		</div>
+	</form>
+</div>
+{% endblock %}

@@ -224,6 +224,50 @@ ola.controller('SubscriberListController', function($scope, $http) {
     }
 });
 
+ola.controller('LeaveTypeFormController', function ($scope, $http) {
+    $scope.forms = [];
+    $scope.form_data = {};
+    $scope.get_leave_types = function () {
+        $http.get(
+            '/leave/type',
+            {
+                'responseType' : 'json',
+                'params' : {'fn' : 'get_all'}
+            }
+        ).success(function(data, status, headers, config) {
+          // this callback will be called asynchronously
+          // when the response is available
+            $scope.leave_types = data.leave_types;
+            if (data.leave_types.length > 0) {
+                $.each($scope.leave_types, function(index, leave_type) {
+                    $scope.create_form(index, leave_type.type_of_leave, leave_type.no_of_leave);
+                });
+            } else {
+                $scope.create_form(0);
+            }
+        }).error(function(data, status, headers, config) {
+          // called asynchronously if an error occurs
+          // or server returns response with an error status.
+          console.log(data);
+        });
+    }
+    $scope.get_leave_types();
+    $scope.create_form = function (index, type_of_leave, no_of_leave) {
+        var form_dict = {};
+        form_dict['name'] = 'leaveTypeForm_' + index;
+        form_dict['fields'] = {};
+        form_dict['fields']['type_of_leave'] = '';
+        form_dict['fields']['no_of_leave'] = '';
+        $scope.forms.push(form_dict);
+    }
+    $scope.delete_form = function (index) {
+        var confirm_action = confirm('Are you sure, you want to remove this leave type?');
+        if (confirm_action) {
+            $scope.forms.splice(index, 1);
+        }
+    }
+});
+
 function showRegistrationTab(tab) {
     $.each($('ul.nav-tabs li a'), function (index, elem) {
         $(elem).removeClass('current');

@@ -33,12 +33,28 @@
 		      			Home
 		      		</a>
 		      	</li>
-		      	<li id="nav-leave-history">
-		      		<a href="#">
-		      			<i class="fa fa-clock-o fa-fw fa-white"></i>
-		      			History
-		      		</a>
-		      	</li>
+		      	<li class="dropdown" id="nav-leave-settings">
+					<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+						<i class="fa fa-calendar fa-fw fa-white"></i>
+						Leave <b class="caret"></b>
+					</a>
+					<ul class="dropdown-menu">
+						<li><a href="#">
+							<i class="fa fa-history fa-fw"></i>
+							History
+						</a></li>
+						{% if auth_group.COMPANY_ADMIN %}
+							<li><a href="{% url 'leave_type_form' %}">
+								<i class="fa fa-tasks fa-fw"></i>
+								Leave Type
+							</a></li>
+							<li><a href="#">
+								<i class="fa fa-calendar fa-fw"></i>
+								Holiday
+							</a></li>
+						{% endif %}
+					</ul>
+				</li>
 		        <li class="dropdown" id="nav-settings">
 					<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
 						<i class="fa fa-wrench fa-fw fa-white"></i>
@@ -55,15 +71,11 @@
 								Manage Users
 							</a></li>
 							<li><a href="#">
-								<i class="fa fa-book fa-fw"></i>
-								Leave Policy
-							</a></li>
-							<li><a href="#">
 								<i class="fa fa-university fa-fw"></i>
 								Manage Company
 							</a></li>
 							<li><a href="#">
-								<i class="fa fa-money fa-fw"></i>
+								<i class="fa fa-dollar fa-fw"></i>
 								Payment
 							</a></li>
 						{% endif %}
@@ -101,14 +113,12 @@
 	</div>
 	<br clear="all" />
 	<div id="footer">
-		<nav class="navbar navbar-default">
 	      <div class="container">
 	        <p class="navbar-text navbar-right">
 	        	Designed and Developed by <code>ByteGeneration</code>.
 	        	All rights reserved.
 	        </p>
 	      </div>
-	    </nav>
 	</div>
 </body>
 </html>

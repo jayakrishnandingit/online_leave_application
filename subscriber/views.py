@@ -8,7 +8,7 @@ from ola.common.utils import get_value_from_request
 from models import Subscriber
 from forms import SubscriberCreationForm
 from client.forms import ClientForm
-from subscriber.ajax import SubscriberAjaxHandler
+from ajax import SubscriberAjaxHandler
 from django.views.generic import View
 from constants import *
 
