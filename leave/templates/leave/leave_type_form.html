@@ -42,15 +42,15 @@
 				</tr>
 				<tr ng-repeat="form in forms">
 					<td>
-						<input type="text" name="type_of_leave" class="form-control" ng-model="form.fields.type_of_leave" required ng-change="has_changed=true" />
+						<input type="text" name="type_of_leave" class="form-control" ng-model="form.fields.type_of_leave" required ng-change="form.has_changed=true" />
 					</td>
 					<td>
-						<input type="text" name="no_of_leave" class="form-control" ng-model="form.fields.no_of_leave" required ng-pattern="/^[\d]+$/" ng-change="has_changed=true" />
+						<input type="text" name="no_of_leave" class="form-control" ng-model="form.fields.no_of_leave" required ng-pattern="/^[\d]+$/" ng-change="form.has_changed=true" />
 				  		<input type="hidden" name="hidden_type_id" ng-model="form.fields.hidden_type_id" />
 					</td>
 					<td>
 						<div class="btn-group floatRight">
-							<a class="btn btn-success" ng-model="has_changed" ng-click="validate_and_proceed(leaveTypeForm.$valid, $index)" ng-show="leaveTypeForm.$dirty" ng-disabled="leaveTypeForm.$invalid" title="Save">
+							<a class="btn btn-success" ng-click="validate_and_proceed(leaveTypeForm.$valid, $index)" ng-show="form.has_changed" ng-disabled="leaveTypeForm.$invalid" title="Save">
 								<i class="fa fa-save fa-lg"></i>
 							</a>
 							<a class="btn btn-default" ng-click="create_form($index)" ng-show="$last" ng-disabled="leaveTypeForm.$invalid" title="Add one more">

@@ -256,6 +256,7 @@ ola.controller('LeaveTypeFormController', function ($scope, $http) {
     $scope.get_leave_types();
     $scope.create_form = function (index, type_of_leave, no_of_leave, type_id) {
         var form_dict = {};
+        form_dict['has_changed'] = false;
         form_dict['fields'] = {};
         form_dict['fields']['type_of_leave'] = type_of_leave;
         form_dict['fields']['no_of_leave'] = no_of_leave;
@@ -305,7 +306,7 @@ ola.controller('LeaveTypeFormController', function ($scope, $http) {
               // when the response is available
                 $scope.save_success = data.is_saved;
                 $scope.forms[index].fields['hidden_type_id'] = data.leave_type.id;
-                $scope.has_changed = false;
+                $scope.forms[index].has_changed = false;
             }).error(function(data, status, headers, config) {
               // called asynchronously if an error occurs
               // or server returns response with an error status.
