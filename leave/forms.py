@@ -8,6 +8,10 @@ class LeaveTypeForm(forms.ModelForm):
 		exclude= ['client', 'created_on', 'created_by']
 
 class LeaveForm(forms.ModelForm):
+	def __init__(self, logged_in_employee, *args, **kwargs):
+		super(LeaveForm, self).__init__(*args, **kwargs)
+		self.fields['leave_type'].choice = [(str(ltyp.id), str(ltyp.type_of_leave)) for ltyp in LeaveType.objects.all()]
+
 	leave_type = forms.ChoiceField(widget=forms.Select(attrs={'class':'form-control', 'ng-model':'leave.type', 'ng-required':'true'}), required=True)
 	approvers = StrippedCharField(widget=forms.TextInput(attrs={'placeholder':'Send Request To', 'class':'form-control', 'ng-model':'leave.approver', 'ng-required':'true'}), required=True)
 	class Meta:

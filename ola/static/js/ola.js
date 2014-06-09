@@ -225,8 +225,10 @@ ola.controller('SubscriberListController', function($scope, $http) {
 });
 
 ola.controller('LeaveTypeFormController', function ($scope, $http) {
-    $scope.forms = [];
-    $scope.form_data = {};
+    $scope.forms = new Array();
+    $scope.deleted_forms = new Array();
+    $scope.save_success = false;
+    $scope.has_changed = false;
     $scope.get_leave_types = function () {
         $http.get(
             '/leave/type',
@@ -240,7 +242,7 @@ ola.controller('LeaveTypeFormController', function ($scope, $http) {
             $scope.leave_types = data.leave_types;
             if (data.leave_types.length > 0) {
                 $.each($scope.leave_types, function(index, leave_type) {
-                    $scope.create_form(index, leave_type.type_of_leave, leave_type.no_of_leave);
+                    $scope.create_form(index, leave_type.type_of_leave, leave_type.no_of_leave, leave_type.id);
                 });
             } else {
                 $scope.create_form(0);
@@ -252,18 +254,64 @@ ola.controller('LeaveTypeFormController', function ($scope, $http) {
         });
     }
     $scope.get_leave_types();
-    $scope.create_form = function (index, type_of_leave, no_of_leave) {
+    $scope.create_form = function (index, type_of_leave, no_of_leave, type_id) {
         var form_dict = {};
-        form_dict['name'] = 'leaveTypeForm_' + index;
         form_dict['fields'] = {};
-        form_dict['fields']['type_of_leave'] = '';
-        form_dict['fields']['no_of_leave'] = '';
+        form_dict['fields']['type_of_leave'] = type_of_leave;
+        form_dict['fields']['no_of_leave'] = no_of_leave;
+        form_dict['fields']['hidden_type_id'] = type_id;
         $scope.forms.push(form_dict);
     }
     $scope.delete_form = function (index) {
         var confirm_action = confirm('Are you sure, you want to remove this leave type?');
         if (confirm_action) {
-            $scope.forms.splice(index, 1);
+            var deleted_ids = new Array();
+            $scope.deleted_forms = $scope.forms.splice(index, 1);
+            $.each($scope.deleted_forms, function(index, form) {
+                $.each(form.fields, function (key, value) {
+                    if(key == 'hidden_type_id' && value) {
+                        deleted_ids.push(value);
+                    }
+                });
+            });
+            if (deleted_ids.length > 0) {
+                // check if any existing type is deleted
+                $http.post(
+                    '/leave/type',
+                    [deleted_ids, 'delete'],
+                    {'responseType' : 'json'}
+                ).success(function(data, status, headers, config) {
+                  // this callback will be called asynchronously
+                  // when the response is available
+                    $scope.save_success = data.is_saved;
+                }).error(function(data, status, headers, config) {
+                  // called asynchronously if an error occurs
+                  // or server returns response with an error status.
+                  alert('server error');
+                  console.log(data);
+                });
+            }
+        }
+    }
+    $scope.validate_and_proceed = function (isValid, index) {
+        if (isValid) {
+            var form_data = $scope.forms[index].fields;
+            $http.post(
+                '/leave/type',
+                [form_data, 'save'],
+                {'responseType' : 'json'}
+            ).success(function(data, status, headers, config) {
+              // this callback will be called asynchronously
+              // when the response is available
+                $scope.save_success = data.is_saved;
+                $scope.forms[index].fields['hidden_type_id'] = data.leave_type.id;
+                $scope.has_changed = false;
+            }).error(function(data, status, headers, config) {
+              // called asynchronously if an error occurs
+              // or server returns response with an error status.
+              alert('server error');
+              console.log(data);
+            });
         }
     }
 });

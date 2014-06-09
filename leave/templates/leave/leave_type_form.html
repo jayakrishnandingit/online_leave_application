@@ -22,32 +22,48 @@
 		Premium users can avail the option to enable leave types for particular employee groups.
 		<a class="btn signup-btn disabled">Upgrade Account</a>
 	</div>
-	<form name="{{form.name}}" class="form-horizontal" role="form" ng--repeat="form in forms" action="javascript:void(0);" method="POST">
-		<div class="form-group">
-			<label class="control-label custom col-xs-4 requiredField">Type of Leave</label>
-			<div class="col-xs-5">
-			<input type="text" name="type_of_leave" class="form-control" ng-model="form.fields.type_of_leave" />
-			</div>
+	{% verbatim %}
+		<div ng-show="save_success" class="alert alert-success alert-dismissable">
+		  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+		  <strong>Great!</strong> New changes are applied.
 		</div>
-		<div class="form-group">
-			<label class="control-label custom col-xs-4 requiredField">No. of Leaves Allowed</label>
-			<div class="col-xs-5">
-		  		<input type="text" name="no_of_leave" class="form-control" ng-model="form.fields.no_of_leave" />
-			</div>
-		</div>
-		<div class="form-group">
-			<div class="btn-group floatRight">
-				<a class="btn btn-primary" ng-click="validate_and_proceed(form.name.$valid)" ng-disabled="form.name.$invalid" ng-show="$last">
-					<i class="fa fa-save fa-lg"></i> Save
-				</a>
-				<a class="btn btn-success" ng-click="create_form($index)" ng-show="$last">
-					<i class="fa fa-plus fa-lg"></i> Add more
-				</a>
-				<a class="btn btn-danger" ng-click="delete_form($index)" ng-hide="$first">
-					<i class="fa fa-trash-o fa-lg"></i> Delete
-				</a>
-			</div>
-		</div>
-	</form>
+		<form name="leaveTypeForm" class="form-horizontal" role="form" action="javascript:void(0);" method="POST" novalidate>
+			<table class="table table-bordered">
+				<tr>
+					<th>
+						Type of Leave
+					</th>
+					<th>
+						No of Leave
+					</th>
+					<th>
+						Actions
+					</th>
+				</tr>
+				<tr ng-repeat="form in forms">
+					<td>
+						<input type="text" name="type_of_leave" class="form-control" ng-model="form.fields.type_of_leave" required ng-change="has_changed=true" />
+					</td>
+					<td>
+						<input type="text" name="no_of_leave" class="form-control" ng-model="form.fields.no_of_leave" required ng-pattern="/^[\d]+$/" ng-change="has_changed=true" />
+				  		<input type="hidden" name="hidden_type_id" ng-model="form.fields.hidden_type_id" />
+					</td>
+					<td>
+						<div class="btn-group floatRight">
+							<a class="btn btn-success" ng-model="has_changed" ng-click="validate_and_proceed(leaveTypeForm.$valid, $index)" ng-show="leaveTypeForm.$dirty" ng-disabled="leaveTypeForm.$invalid" title="Save">
+								<i class="fa fa-save fa-lg"></i>
+							</a>
+							<a class="btn btn-default" ng-click="create_form($index)" ng-show="$last" ng-disabled="leaveTypeForm.$invalid" title="Add one more">
+								<i class="fa fa-plus fa-lg"></i>
+							</a>
+							<a class="btn btn-default" ng-click="delete_form($index)" title="Delete this type" ng-disabled="forms.length <= 1">
+								<i class="fa fa-trash-o fa-lg"></i>
+							</a>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</form>
+	{% endverbatim %}
 </div>
 {% endblock %}
