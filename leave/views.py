@@ -48,3 +48,13 @@ class LeaveTypeFormView(View):
 			'leave_type_form' : LeaveTypeForm()
 		}
 		return render(request, 'leave/leave_type_form.html', context)
+
+class HolidayFormView(View):
+	def get(self, request):
+		auth_group = UserGroupManager.check_user_group(request.user)
+		if not UserGroupManager.is_company_admin(request.user):
+			raise UnauthorizedException('Access Violation')
+		context = {
+			'auth_group' : auth_group
+		}
+		return render(request, 'leave/holidays.html', context)
