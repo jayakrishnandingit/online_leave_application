@@ -621,6 +621,24 @@ div.notificationsNav ul::-webkit-scrollbar-thumb:hover{
     text-decoration: none;
     color: black;
 }
+
+.icon {
+    cursor: pointer;
+    opacity: 0.75;
+}
+
+.icon:hover {
+    opacity: 1;
+}
+
+.icon.blue {
+    color: #4D98D2;
+}
+
+.iconFullOpacity {
+    cursor: pointer;
+    opacity: 1;
+}
 /*****************************************************************************/
 .floatRight {
     float: right !important;

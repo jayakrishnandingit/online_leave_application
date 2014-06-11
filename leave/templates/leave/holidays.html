@@ -10,7 +10,18 @@
 	</script>
 {% endblock %}
 {% block content %}
-<div class="container">
-	<div class="calendar" ng-model="eventSources" calendar="myCalendar" config="uiConfig.calendar" ui-calendar="uiConfig.calendar"></div>
+{% verbatim %}
+<div ng-controller="HolidayCalendarController">
+	<div class="leftContainer" calendar="holiday_calendar" ui-calendar="calendarConfig" ng-model="eventSources"></div>
+	<div class="rightContainer">
+		<div class="alert alert-info" ng-repeat="event in events">
+			<div class="floatRight"><i class="icon fa fa-times fa-fw" ng-click="remove($index)"></i></div>
+			<form name="holiday_form_{{$index}}" class="form-inline" action="javascript:void(0);" method="POST">
+				<input class="form-control" name="name" type="text" ng-model="event.title" />
+			</form>
+			{{event.start | date:"MMM dd"}} - {{event.end | date:"MMM dd"}}
+		</div>
+	</div>
 </div>
+{% endverbatim %}
 {% endblock %}
