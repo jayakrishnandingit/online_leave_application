@@ -11,17 +11,19 @@
 {% endblock %}
 {% block content %}
 {% verbatim %}
-<div ng-controller="HolidayCalendarController">
-	<div class="leftContainer" calendar="holiday_calendar" ui-calendar="calendarConfig" ng-model="eventSources"></div>
-	<div class="rightContainer">
-		<div class="alert alert-info" ng-repeat="event in events">
-			<div class="floatRight"><i class="icon fa fa-times fa-fw" ng-click="remove($index)"></i></div>
-			<form name="holiday_form_{{$index}}" class="form-inline" action="javascript:void(0);" method="POST">
-				<input class="form-control" name="name" type="text" ng-model="event.title" />
-			</form>
-			{{event.start | date:"MMM dd"}} - {{event.end | date:"MMM dd"}}
+<div class="container" ng-controller="HolidayCalendarController">
+		<div class="row">
+			<div class="col-xs-8">
+				<div calendar="holiday_calendar" ui-calendar="calendarConfig" ng-model="eventSources"></div>
+			</div>
+			<div class="col-xs-4">
+				<div class="alert alert-info" ng-repeat="e in events">
+                    <a class="close" ng-click="remove($index)"><i class="fa fa-times fa-fw icon"></i></a>
+                    <b> <input class="form-control" ng-model="e.title"></b>
+                    {{e.start | date:"MMM dd"}} - {{e.end | date:"MMM dd"}}
+	            </div>
+			</div>
 		</div>
-	</div>
 </div>
 {% endverbatim %}
 {% endblock %}

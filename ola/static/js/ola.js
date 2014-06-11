@@ -356,7 +356,9 @@ ola.controller('HolidayCalendarController', function($scope, $http) {
     $scope.select = function(start_date, end_date, all_day, js_event, view) {
         $scope.create_event(start_date, end_date);
     }
-
+    $scope.drop = function (event, revertFunc, jsEvent, ui, view) {
+        return;
+    }
     $scope.eventSources = [$scope.events];
 
     $scope.calendarConfig = {
@@ -369,7 +371,7 @@ ola.controller('HolidayCalendarController', function($scope, $http) {
           right: 'today prev,next'
         },
         select: $scope.select,
-        eventDrop: $scope.drop
+        eventDrop: $scope.drop,
     };
     /* remove event */
     $scope.remove = function(index) {
