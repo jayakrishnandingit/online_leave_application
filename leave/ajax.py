@@ -4,7 +4,7 @@ from ola.common.ajax import JSONParser
 from ola.common.utils import get_month_end
 from ola.common.permissions import UserGroupManager, GROUP_NAME_MAP
 from models import LeaveType, Holiday
-from forms import LeaveTypeForm
+from forms import LeaveTypeForm, HolidayForm
 from subscriber.models import Subscriber
 from django.contrib.auth.models import Group, User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger, InvalidPage
@@ -49,19 +49,42 @@ class HolidayAjaxHandler(JSONParser):
 
 		logged_in_employee = Subscriber.objects.get(user=self.user)
 		if not start:
-			start = datetime.datetime.today().replace(day=1)
+			start = datetime.datetime.today().replace(day=1).date()
 		else:
-			start = datetime.datetime.strptime(start, DATE_INPUT_FORMATS[0])
+			start = datetime.datetime.strptime(start, DATE_INPUT_FORMATS[0]).date()
 		if not end:
-			end = datetime.datetime.today().replace(day=get_month_end())
+			end = datetime.datetime.today().replace(day=get_month_end()).date()
 		else:
-			end = datetime.datetime.strptime(end, DATE_INPUT_FORMATS[0])
+			end = datetime.datetime.strptime(end, DATE_INPUT_FORMATS[0]).date()
+
 		holidays = Holiday.objects.filter(
 			client=logged_in_employee.client,
 			start__gte=start,
 			start__lte=end
-		).order_by('-created_on')
+		).order_by('start')
 		serialized_objects = []
 		for holiday in holidays:
 			serialized_objects.append(holiday.serialize())
 		return self.respond(holidays=serialized_objects)
+
+	def save(self, form_values):
+		if not UserGroupManager.is_company_admin(self.user):
+			raise UnauthorizedException('Access Violation')
+		logged_in_employee = Subscriber.objects.get(user=self.user)
+
+		form = HolidayForm(form_values, instance=Holiday.objects.filter(pk=form_values.get('id')).first())
+		if form.is_valid():
+			holiday = form.save(commit=False)
+			holiday.client = logged_in_employee.client
+			holiday.created_by = logged_in_employee
+			holiday.save()
+			return self.respond(is_saved=True, holiday=holiday.serialize())
+		return self.respond(is_saved=False, errors=form.errors)
+
+	def delete(self, holiday_id):
+		if not UserGroupManager.is_company_admin(self.user):
+			raise UnauthorizedException('Access Violation')
+		logged_in_employee = Subscriber.objects.get(user=self.user)
+
+		Holiday.objects.get(pk=holiday_id).delete()
+		return self.respond(is_saved=True)

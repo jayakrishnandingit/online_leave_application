@@ -1,11 +1,22 @@
 from django import forms
-from models import Leave, LeaveType
+from models import Leave, LeaveType, Holiday
 from ola.common.forms import StrippedCharField
+from ola.settings import DATE_INPUT_FORMATS
 
 class LeaveTypeForm(forms.ModelForm):
 	class Meta:
 		model = LeaveType
 		exclude= ['client', 'created_on', 'created_by']
+
+class HolidayForm(forms.ModelForm):
+	def __init__(self, *args, **kwargs):
+		super(HolidayForm, self).__init__(*args, **kwargs)
+		self.fields['start'].input_formats = [DATE_INPUT_FORMATS[0]]
+		self.fields['end'].input_formats = [DATE_INPUT_FORMATS[0]]
+
+	class Meta:
+		model = Holiday
+		exclude = ['client', 'created_on', 'created_by']
 
 class LeaveForm(forms.ModelForm):
 	def __init__(self, logged_in_employee, *args, **kwargs):

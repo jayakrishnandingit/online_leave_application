@@ -19,7 +19,12 @@
 			<div class="col-xs-4">
 				<div class="alert alert-info" ng-repeat="e in events">
                     <a class="close" ng-click="remove($index)"><i class="fa fa-times fa-fw icon"></i></a>
-                    <b> <input class="form-control" ng-model="e.title"></b>
+                    <b>
+                    	<ng-form name="holiday_form" novalidate action="javascript:void(0);" method="POST">
+	                    	<input name="{{$index}}" class="form-control" ng-model="e.title" ng-blur="validate_and_proceed(holiday_form.$valid, $index)" required>
+	                    	<span class="error" ng-show="holiday_form.$invalid && holiday_form.$dirty">Required</span>
+                    	</ng-form>
+                    </b>
                     {{e.start | date:"MMM dd"}} - {{e.end | date:"MMM dd"}}
 	            </div>
 			</div>
