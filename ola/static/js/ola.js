@@ -353,8 +353,8 @@ ola.controller('HolidayCalendarController', function($scope, $http) {
 				$.each(data.holidays, function(index, holiday) {
 					$scope.create_event(getDateFromString(holiday.start), getDateFromString(holiday.end), holiday.name, holiday.id);
 				});
-				callback($scope.events);
 			}
+			callback($scope.events);
 		}).error(function(data, status, headers, config) {
 		  // called asynchronously if an error occurs
 		  // or server returns response with an error status.
