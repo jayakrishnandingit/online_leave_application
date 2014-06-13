@@ -338,21 +338,22 @@ ola.controller('HolidayCalendarController', function($scope, $http) {
 		};
 		return a_form;
 	}
-	$scope.get_holidays = function (start, end) {
+	$scope.get_holidays = function (start, end, callback) {
 		$http.get(
 			'/leave/holiday',
 			{
 				'responseType' : 'json',
-				'params' : {'fn' : 'get_all', 'fd' : start, 'td' : end}
+				'params' : {'fn' : 'get_all', 'fd' : getFormattedDate(start), 'td' : getFormattedDate(end)}
 			}
 		).success(function(data, status, headers, config) {
 		  // this callback will be called asynchronously
 		  // when the response is available
+            $scope.events = [];
 			if (data.holidays.length > 0) {
 				$.each(data.holidays, function(index, holiday) {
 					$scope.create_event(getDateFromString(holiday.start), getDateFromString(holiday.end), holiday.name, holiday.id);
 				});
-				$scope.eventSources = [$scope.events];
+				callback($scope.events);
 			}
 		}).error(function(data, status, headers, config) {
 		  // called asynchronously if an error occurs
@@ -360,7 +361,6 @@ ola.controller('HolidayCalendarController', function($scope, $http) {
 		  console.log(data);
 		});
 	}
-	$scope.get_holidays();
 	$scope.validate_and_proceed = function (is_valid, index) {
 		if(is_valid) {
 			var form_data = $scope.create_form($scope.events[index]);
@@ -423,7 +423,7 @@ ola.controller('HolidayCalendarController', function($scope, $http) {
 		}
 	};
 	
-	$scope.eventSources = [$scope.events];
+	$scope.eventSources = [$scope.get_holidays];
 
 	$scope.calendarConfig = {
 		height: 500,
