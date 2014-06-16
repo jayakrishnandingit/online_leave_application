@@ -440,6 +440,28 @@ ola.controller('HolidayCalendarController', function($scope, $http) {
 	};
 });
 
+ola.controller('LeaveFormController', function ($scope, $http) {
+	$scope.approvers = new Array();
+	$scope.get_approvers = function (value) {
+		$http.get(
+			'/subscriber',
+			{
+				'responseType' : 'json',
+				'params' : {'fn' : 'get_approvers', 'st' : value}
+			}
+		).success(function(data, status, headers, config) {
+		  // this callback will be called asynchronously
+		  // when the response is available
+            $scope.approvers = data.approvers;
+            return $scope.approvers;
+		}).error(function(data, status, headers, config) {
+		  // called asynchronously if an error occurs
+		  // or server returns response with an error status.
+		  console.log(data);
+		});
+	}
+});
+
 function showRegistrationTab(tab) {
 	$.each($('ul.nav-tabs li a'), function (index, elem) {
 		$(elem).removeClass('current');

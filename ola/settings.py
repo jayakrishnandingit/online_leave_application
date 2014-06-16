@@ -83,7 +83,8 @@ DATETIME_INPUT_FORMATS = (
     '%d/%m/%Y %H:%M:%S',
     '%d/%m/%Y %H:%M',
 )
-
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 

@@ -7,6 +7,7 @@ from models import Subscriber
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm, AdminPasswordChangeForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger, InvalidPage
+from django.db.models import Q
 
 class SubscriberAjaxHandler(JSONParser):
 	def do_registration(self, form_values):
@@ -181,3 +182,24 @@ class SubscriberAjaxHandler(JSONParser):
 			if not is_company_admin:
 				raise UnauthorizedException('Access Violation')
 		return self.respond(subscriber=subscriber_to_get.serialize())
+
+	def get_approvers(self, st):
+		logged_in_employee = Subscriber.objects.get(user=self.user)
+		approvers = Subscriber.objects.filter(
+			client=logged_in_employee.client,
+			user__groups__name__exact=GROUP_NAME_MAP['LEAVE_APPROVER']
+		)
+		approvers = self._prepare_search(approvers, st)
+		serialized_objects = []
+		for approver in approvers:
+			serialized_objects.append(approver.serialize())
+		return self.respond(approvers=serialized_objects)
+
+	def _prepare_search(self, subscribers, search_text):
+		subscribers = subscribers.filter(
+			Q(user__first_name__icontains=search_text) |
+			Q(user__last_name__icontains=search_text) |
+			Q(user__email__icontains=search_text)
+		)
+		return subscribers
+

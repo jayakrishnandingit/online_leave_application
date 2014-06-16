@@ -15,18 +15,17 @@ from constants import *
 # Create your views here.
 class SubscriberAPI(View):
 	def get(self, request):
-		page_no = int(request.GET.get('page_no', 1))
-		no_of_records = int(request.GET.get('no_of_records', NUMBER_OF_VALUES_PER_PAGE))
-		show_all = bool(int(request.GET.get('show_all', 0)))
-
+		request_values = {}
+		for key, value in request.GET.iteritems():
+			request_values.update({key: value})
 		ajaxMainClass = SubscriberAjaxHandler()
 		ajaxMainClass.httpRequest = request
 		ajaxMainClass.user = request.user
-		funtionToCall = getattr(ajaxMainClass, request.GET.get('fn'), None)
+		funtionToCall = getattr(ajaxMainClass, request_values.pop('fn'), None)
 		if not funtionToCall:
 			return http.Http404
 
-		responseValues = funtionToCall(page_no, no_of_records, show_all)
+		responseValues = funtionToCall(**request_values)
 		response = http.HttpResponse()
 		response.status_code = 200
 		response.write(responseValues)
