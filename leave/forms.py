@@ -23,8 +23,7 @@ class LeaveForm(forms.ModelForm):
 		super(LeaveForm, self).__init__(*args, **kwargs)
 		self.fields['leave_type'].choices = [(str(ltyp.id), str(ltyp.type_of_leave)) for ltyp in LeaveType.objects.filter(client=logged_in_employee.client)]
 
-	leave_type = forms.ChoiceField(choices=[], widget=forms.Select(attrs={'class':'form-control', 'ng-model':'leave.type', 'ng-required':'true'}), required=True)
-	approvers = StrippedCharField(widget=forms.TextInput(attrs={'placeholder':'Send Request To', 'class':'form-control', 'ng-model':'leave.approver', 'ng-required':'true'}), required=True)
+	leave_type = forms.ChoiceField(choices=[], widget=forms.Select(attrs={'class':'form-control', 'ng-model':'form_data.leave_type', 'ng-required':'true'}), required=True)
 	class Meta:
 		model = Leave
 		exclude = ['type_of_leave', 'requester', 'approver', 'status', 'created_on']

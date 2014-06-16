@@ -10,13 +10,13 @@
 		<div class="form-group">
 			<div class="col-xs-5">
 				<div class="input-group marginAll1P">
-			  		<input class="form-control" type="text" placeholder="From" id="id_start" name="start">
+			  		<input class="form-control" type="text" placeholder="From" id="id_start" name="start" ng-model="form_data.start" >
 			  		<span class="input-group-addon"><i class="fa fa-calendar fa-fw"></i></span>
 				</div>
 			</div>
 			<div class="col-xs-5">
 				<div class="input-group marginAll1P">
-			  		<input class="form-control" type="text" placeholder="To" id="id_end" name="end">
+			  		<input class="form-control" type="text" placeholder="To" id="id_end" name="end" ng-model="form_data.end" />
 			  		<span class="input-group-addon"><i class="fa fa-calendar fa-fw"></i></span>
 			  	</div>
 			</div>
@@ -31,8 +31,8 @@
 			<div class="col-xs-5">
 				<div class="input-group marginAll1P">
 					<span class="input-group-addon"><i class="fa fa-users fa-fw"></i></span>
-			  		<input type="text" name="approvers" ng-model="approvers" placeholder="Select approvers as you type in" typeahead="approver for approver in get_approvers($viewValue)" typeahead-loading="loadingApprovers" class="form-control">
-					<i ng-show="loadingApprovers" class="fa fa-refresh"></i>
+			  		<input type="text" ng-model="selected_approver_name" placeholder="Select approvers as you type in" typeahead="approver.name for approver in get_approvers($viewValue)" typeahead-loading="loadingApprovers" typeahead-on-select="set_selected($item)" class="form-control">
+			  		<span class="input-group-addon" ng-show="loadingApprovers"><i class="fa fa-spinner fa-spin"></i></span>
 				</div>
 			</div>
 		</div>

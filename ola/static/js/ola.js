@@ -441,25 +441,31 @@ ola.controller('HolidayCalendarController', function($scope, $http) {
 });
 
 ola.controller('LeaveFormController', function ($scope, $http) {
-	$scope.approvers = new Array();
+    $scope.selected_approver_name = null;
+    $scope.selected_approver_id = null;
 	$scope.get_approvers = function (value) {
-		$http.get(
+		return $http.get(
 			'/subscriber',
 			{
 				'responseType' : 'json',
 				'params' : {'fn' : 'get_approvers', 'st' : value}
 			}
-		).success(function(data, status, headers, config) {
+		).then(function(res) {
 		  // this callback will be called asynchronously
 		  // when the response is available
-            $scope.approvers = data.approvers;
-            return $scope.approvers;
-		}).error(function(data, status, headers, config) {
-		  // called asynchronously if an error occurs
-		  // or server returns response with an error status.
-		  console.log(data);
+            var approvers = [];
+            angular.forEach(res.data.approvers, function(value) {
+                var approver = {};
+                approver['id'] = value.user.id;
+                approver['name'] = value.user.name + ' ' + '<' + value.user.email + '>';
+                approvers.push(approver);
+            });
+            return approvers;
 		});
 	}
+    $scope.set_selected = function (value) {
+        $scope.selected_approver_id = value.id;
+    }
 });
 
 function showRegistrationTab(tab) {
