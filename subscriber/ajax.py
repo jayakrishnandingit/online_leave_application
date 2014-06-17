@@ -183,13 +183,14 @@ class SubscriberAjaxHandler(JSONParser):
 				raise UnauthorizedException('Access Violation')
 		return self.respond(subscriber=subscriber_to_get.serialize())
 
-	def get_approvers(self, st):
+	def get_approvers(self):
 		logged_in_employee = Subscriber.objects.get(user=self.user)
 		approvers = Subscriber.objects.filter(
 			client=logged_in_employee.client,
 			user__groups__name__exact=GROUP_NAME_MAP['LEAVE_APPROVER']
+		).exclude(
+			id__exact=logged_in_employee.id
 		)
-		approvers = self._prepare_search(approvers, st)
 		serialized_objects = []
 		for approver in approvers:
 			serialized_objects.append(approver.serialize())

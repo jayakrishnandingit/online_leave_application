@@ -443,26 +443,28 @@ ola.controller('HolidayCalendarController', function($scope, $http) {
 ola.controller('LeaveFormController', function ($scope, $http) {
     $scope.selected_approver_name = null;
     $scope.selected_approver_id = null;
-	$scope.get_approvers = function (value) {
-		return $http.get(
+    $scope.approvers = [];
+	$scope.get_approvers = function () {
+		$http.get(
 			'/subscriber',
 			{
 				'responseType' : 'json',
-				'params' : {'fn' : 'get_approvers', 'st' : value}
+				'params' : {'fn' : 'get_approvers'}
 			}
 		).then(function(res) {
 		  // this callback will be called asynchronously
 		  // when the response is available
-            var approvers = [];
+            $scope.approvers = [];
             angular.forEach(res.data.approvers, function(value) {
                 var approver = {};
                 approver['id'] = value.user.id;
                 approver['name'] = value.user.name + ' ' + '<' + value.user.email + '>';
-                approvers.push(approver);
+                $scope.approvers.push(approver);
             });
-            return approvers;
+            return $scope.approvers;
 		});
 	}
+    $scope.get_approvers();
     $scope.set_selected = function (value) {
         $scope.selected_approver_id = value.id;
     }
