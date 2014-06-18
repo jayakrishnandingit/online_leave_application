@@ -4,11 +4,27 @@ from ola.common.ajax import JSONParser
 from ola.common.utils import get_month_end
 from ola.common.permissions import UserGroupManager, GROUP_NAME_MAP
 from models import LeaveType, Holiday
-from forms import LeaveTypeForm, HolidayForm
+from forms import LeaveForm, LeaveTypeForm, HolidayForm
 from subscriber.models import Subscriber
 from django.contrib.auth.models import Group, User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger, InvalidPage
 from ola.settings import DATE_INPUT_FORMATS
+from mailer import SendNotification
+
+class LeaveAjaxHandler(JSONParser):
+	def request_leave(self, form_values):
+		logged_in_employee = Subscriber.objects.get(user=self.user)
+		form = LeaveForm(logged_in_employee, form_values)
+		if form.is_valid():
+			leave = form.save(commit=False)
+			leave.type_of_leave = LeaveType.objects.get(pk=form.cleaned_data['leave_type'])
+			leave.requester = logged_in_employee
+			leave.approver = Subscriber.objects.get(user__id__exact=form.cleaned_data['approver'])
+			leave.status = 0 # pending
+			leave.save()
+			SendNotification([leave.approver.user.email], leave.requester.user.email, 'leave_request', leave).start()
+			return self.respond(is_saved=True)
+		return self.respond(is_saved=False, errors=form.errors)
 
 class LeaveTypeAjaxHandler(JSONParser):
 	def get_all(self):

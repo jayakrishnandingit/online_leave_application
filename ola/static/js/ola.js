@@ -58,7 +58,6 @@ ola.controller('SubscriberEditFormController', function($scope, $http) {
 			$scope.form_data['username'] = $scope.subscriber.user.username;
 			$scope.form_data['role'] = $scope.subscriber.group.id;
 			$scope.form_data['is_active'] = $scope.subscriber.user.is_active;
-			$scope.form_data['no_of_leave_remaining'] = $scope.subscriber.no_of_leave_remaining;
 			$scope.form_data['hidden_user'] = $scope.subscriber.user.id.toString();
 		}).error(function(data, status, headers, config) {
 		  // called asynchronously if an error occurs
@@ -441,9 +440,12 @@ ola.controller('HolidayCalendarController', function($scope, $http) {
 });
 
 ola.controller('LeaveFormController', function ($scope, $http) {
-    $scope.selected_approver_name = null;
-    $scope.selected_approver_id = null;
-    $scope.approvers = [];
+    $scope.init = function() {
+	    $scope.selected_approver_name = null;
+	    $scope.selected_approver_id = null;
+	    $scope.form_data= {};
+    }
+    $scope.init();
 	$scope.get_approvers = function () {
 		$http.get(
 			'/subscriber',
@@ -467,6 +469,29 @@ ola.controller('LeaveFormController', function ($scope, $http) {
     $scope.get_approvers();
     $scope.set_selected = function (value) {
         $scope.selected_approver_id = value.id;
+    }
+    $scope.validate_and_proceed = function(is_valid) {
+    	if(is_valid) {
+			$scope.form_data['approver'] = $scope.selected_approver_id;
+			console.log($scope.form_data);
+			$http.post(
+				'/leave',
+				[$scope.form_data, 'request_leave'],
+				{'responseType' : 'json'}
+			).success(function(data, status, headers, config) {
+			  // this callback will be called asynchronously
+			  // when the response is available
+				$scope.save_success = data.is_saved;
+				if(data.is_saved) {
+					$scope.init();
+				}
+			}).error(function(data, status, headers, config) {
+			  // called asynchronously if an error occurs
+			  // or server returns response with an error status.
+			  alert('server error');
+			  console.log(data);
+			});
+		}
     }
 });
 

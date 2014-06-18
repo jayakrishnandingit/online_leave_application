@@ -72,20 +72,6 @@
 		</div>
 		{% if auth_group.COMPANY_ADMIN %}
 			<div class="form-group">
-				<label class="control-label custom col-xs-4 requiredField">Leave Remaining</label>
-				<div class="col-xs-5">
-			  		{{subscriber_change_form.no_of_leave_remaining}}
-			  		<span ng-show="subscriberEditForm.no_of_leave_remaining.$invalid && subscriberEditForm.no_of_leave_remaining.$dirty" class="error">
-			  			<span ng-show="subscriberEditForm.no_of_leave_remaining.$error.required" class="error">
-							Required.
-						</span>
-						<span ng-show="subscriberEditForm.no_of_leave_remaining.$error.pattern" class="error">
-							Must be a number.
-						</span>
-			  		</span>
-				</div>
-			</div>
-			<div class="form-group">
 				<label class="control-label custom col-xs-4 requiredField">Role</label>
 				<div class="col-xs-5">
 			  		{{subscriber_change_form.role}}
@@ -109,14 +95,6 @@
 				</div>
 			</div>
 		{% else %}
-			<div class="form-group">
-				<label class="control-label custom col-xs-4 requiredField">Leave Remaining</label>
-				<div class="col-xs-5">
-			  		{% verbatim %}
-			  			{{subscriber.no_of_leave_remaining}}
-			  		{% endverbatim %}
-				</div>
-			</div>
 			<div class="form-group">
 				<label class="control-label custom col-xs-4 requiredField">Role</label>
 				<div class="col-xs-5">

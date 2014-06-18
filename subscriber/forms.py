@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import Group, User
 from ola.common.forms import StrippedCharField
 from models import Subscriber
@@ -34,17 +35,6 @@ class SubscriberCreationForm(forms.Form):
 		), 
 		required = True
 	)
-	no_of_leave_remaining = forms.IntegerField(
-		widget=forms.TextInput(
-			attrs={
-				'class' : 'form-control', 
-				'ng-model':'form_data.no_of_leave_remaining', 
-				'ng-required' : 'true',
-				'ng-pattern' : '/^[\d\.]+$/'
-			}
-		),
-		required=False
-	)
 	role = forms.ChoiceField(
 		choices=[('', '----Select Role----')] + [(str(grp.id), str(grp.name)) for grp in Group.objects.all()],
 		widget=forms.Select(
@@ -69,14 +59,6 @@ class SubscriberCreationForm(forms.Form):
 	logged_in_employee = None
 	user_changed = None
 	auth_group = None
-
-	def clean_no_of_leave_remaining(self):
-		if self.is_company_admin:
-			if not self.cleaned_data['no_of_leave_remaining'] and self.cleaned_data['no_of_leave_remaining'] != 0:
-				raise ValidationError('This field is required.')
-			if self.cleaned_data['no_of_leave_remaining'] < 0:
-				raise ValidationError('Invalid Entry')
-		return self.cleaned_data['no_of_leave_remaining']
 
 	def clean_role(self):
 		if self.is_company_admin:

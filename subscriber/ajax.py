@@ -29,8 +29,7 @@ class SubscriberAjaxHandler(JSONParser):
 			user.groups.add(*user_groups)
 			subscriber = Subscriber(
 				user=user,
-				client=client,
-				no_of_leave_remaining=0
+				client=client
 			)
 			subscriber.save()
 			return self.respond(is_saved=True)
@@ -62,8 +61,7 @@ class SubscriberAjaxHandler(JSONParser):
 			user.groups.add(*user_groups)
 			subscriber = Subscriber(
 				user=user,
-				client=logged_in_employee.client,
-				no_of_leave_remaining=subscriber_form.cleaned_data['no_of_leave_remaining']
+				client=logged_in_employee.client
 			)
 			subscriber.save()
 			return self.respond(is_saved=True, subscriber=subscriber.serialize())
@@ -97,7 +95,6 @@ class SubscriberAjaxHandler(JSONParser):
 			user_group = copy.copy(subscriber_to_save.user.groups.all())
 			user_form.save()
 			if is_company_admin:
-				subscriber_to_save.no_of_leave_remaining=subscriber_form.cleaned_data['no_of_leave_remaining']
 				subscriber_to_save.save()
 				subscriber_to_save.user.groups.clear()
 				user_group = [Group.objects.get(pk=subscriber_form.cleaned_data['role'])]
@@ -135,6 +132,7 @@ class SubscriberAjaxHandler(JSONParser):
 		logged_in_employee = Subscriber.objects.get(user=self.user)
 		subscribers = Subscriber.objects.filter(client__id__exact=logged_in_employee.client.id).order_by('-created_on')
 
+		show_all = bool(int(show_all))
 		prevPageNo = 0
 		nextPageNo = 0
 		current_page_number = 0
@@ -187,7 +185,7 @@ class SubscriberAjaxHandler(JSONParser):
 		logged_in_employee = Subscriber.objects.get(user=self.user)
 		approvers = Subscriber.objects.filter(
 			client=logged_in_employee.client,
-			user__groups__name__exact=GROUP_NAME_MAP['LEAVE_APPROVER']
+			user__groups__name__in=[GROUP_NAME_MAP['LEAVE_APPROVER'], GROUP_NAME_MAP['COMPANY_ADMIN']]
 		).exclude(
 			id__exact=logged_in_employee.id
 		)

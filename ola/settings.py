@@ -67,9 +67,9 @@ DATABASES = {
     'default': {
         'ENGINE':'django.db.backends.postgresql_psycopg2',
         'NAME': 'ola',
-        'USER': 'jk',
+        'USER': 'postgres',
         'PASSWORD': '123',
-        'HOST': '10.0.0.132',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
@@ -83,8 +83,12 @@ DATETIME_INPUT_FORMATS = (
     '%d/%m/%Y %H:%M:%S',
     '%d/%m/%Y %H:%M',
 )
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 25
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'jayakrishnandamodaran@gmail.com'
+EMAIL_HOST_PASSWORD = '$jayakrishnan123'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
