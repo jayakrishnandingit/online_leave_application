@@ -2,10 +2,13 @@
 {% block head %}
 	<link href="/static/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.css" rel="stylesheet" media="screen">
     <script type="text/javascript" src="/static/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+    <script type="text/javascript">
+    	var user_id = '{{request.user.id}}';
+    </script>
 {% endblock %}
 {% block content %}
-<div class="container">
-	<form class="form-horizontal" role="form" ng-controller="LeaveFormController" name="leaveRequestForm" novalidate>
+<div class="container" ng-controller="HomeController">
+	<form class="form-horizontal" role="form" name="leaveRequestForm" novalidate>
 		<legend>Request Leave</legend>
 		<div class="form-group">
 			<div class="col-xs-5">
@@ -49,6 +52,14 @@
 			</div>
 		</div>
 	</form>
+	<div class="col-xs-6">
+		<legend>Days you are going on leave.</legend>
+		<div calendar="leaves_approved_calendar" ui-calendar="calendarConfig" ng-model="eventSources"></div>
+	</div>
+	<div class="col-xs-6">
+		<legend>Days you have requested for leave.</legend>
+		<div calendar="leaves_requested_calendar" ui-calendar="calendarConfig" ng-model="eventSources2"></div>
+	</div>
 </div>
 <script type="text/javascript">
 	$('#id_start').datetimepicker({

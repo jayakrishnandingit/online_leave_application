@@ -7,6 +7,8 @@ from subscriber.models import Subscriber
 class LeaveType(models.Model):
 	type_of_leave = models.CharField(max_length=100)
 	no_of_leave = models.IntegerField()
+	# carry_forward_percentage
+	# max_leave_allowed
 	client = models.ForeignKey(Client, related_name='leave_type_client')
 	created_on = models.DateTimeField(auto_now_add=True)
 	created_by = models.ForeignKey(Subscriber, related_name='leave_type_subscriber')
@@ -40,6 +42,42 @@ class LeaveType(models.Model):
 
 		return output
 
+class LeaveBucket(models.Model):
+	subscriber = models.ForeignKey(Subscriber, related_name='subscriber_leave_bucket_subscriber')
+	type_of_leave = models.ForeignKey(LeaveType, related_name='subscriber_leave_bucket_type')
+	bucket = models.FloatField()
+	created_on = models.DateTimeField(auto_now_add=True)
+	created_by = models.ForeignKey(Subscriber, related_name='subscriber_leave_bucket_created_by')
+	updated_on = models.DateTimeField(auto_now=True)
+	maxDepth = 1
+
+	def serialize(self, maxDepth=1):
+		import datetime
+		import decimal
+		from ola.settings import DATETIME_INPUT_FORMATS, DATE_INPUT_FORMATS
+
+		output = {}
+
+		for prop in self._meta.get_all_field_names():
+			value = getattr(self, prop)
+			if value is None or isinstance(value, BASIC_TYPES):
+				output[prop] = value
+			elif isinstance(value, decimal.Decimal):
+				# TODO: we need to find a work around for this
+				output[prop] = float(value)
+			elif isinstance(value, datetime.datetime):
+				output[prop] = value.strftime(DATETIME_INPUT_FORMATS[0])
+			elif isinstance(value, datetime.date):
+				output[prop] = value.strftime(DATE_INPUT_FORMATS[0])
+			elif isinstance(value, models.Model):
+				if self.maxDepth <= maxDepth:
+					output[prop] = value.serialize((maxDepth - 1))
+				else:
+					output[prop] = value.id
+			else:
+				pass
+
+		return output
 
 class Holiday(models.Model):
 	name = models.CharField(max_length=100)
@@ -116,4 +154,3 @@ class Leave(models.Model):
 				pass
 
 		return output
-

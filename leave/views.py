@@ -82,6 +82,25 @@ class LeaveTypeFormView(View):
 		}
 		return render(request, 'leave/leave_type_form.html', context)
 
+class SubscriberLeaveDetailsAPI(View):
+	def get(self, request, user_id):
+		request_values = {}
+		for key, value in request.GET.iteritems():
+			request_values.update({key: value})
+		ajaxMainClass = LeaveAjaxHandler()
+		ajaxMainClass.httpRequest = request
+		ajaxMainClass.user = request.user
+		funtionToCall = getattr(ajaxMainClass, request_values.pop('fn'), None)
+		if not funtionToCall:
+			return http.Http404
+
+		responseValues = funtionToCall(user_id, **request_values)
+		response = http.HttpResponse()
+		response.status_code = 200
+		response.write(responseValues)
+		response['Content-Type'] = 'application/json'
+		return response
+
 class HolidayAPI(View):
 	def get(self, request):
 		start_date = request.GET.get('fd')
