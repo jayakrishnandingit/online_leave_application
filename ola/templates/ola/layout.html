@@ -20,6 +20,9 @@
 	<script src="{% static 'js/olaCommon.js' %}"></script>
 	<script src="{% static 'js/olaConstants.js' %}"></script>
 	<script src="{% static 'js/ola.js' %}"></script>
+	<script>
+		var logged_in_user_id = '{{request.user.id}}';
+	</script>
 	{% block head %}{% endblock %}
 </head>
 <body>
@@ -91,8 +94,8 @@
 		    </div><!-- /.navbar-collapse -->
 	    	<div class="userContainer">
 	    		<div class="customIconContainer">
-	    			<a href="{% url 'django.contrib.auth.views.logout_then_login' %}?next={{request.path}}">
-	    				<i class="fa fa-sign-out fa-lg fa-white"></i>
+		    		<a href="{% url 'django.contrib.auth.views.logout_then_login' %}?next={{request.path}}">
+	    				<i class="fa fa-sign-out fa-lg fa-white icon"></i>
 		    		</a>
 		    	</div>
 		    	<div class="welcome">
@@ -104,6 +107,29 @@
 		    			{% endif %}
 		    		</p>
 		    	</div>
+		    	{% verbatim %}
+		    		<div ng-controller="NotificationController" class="pull-right">
+				    	<div class="customIconContainer">
+	    					<i ng-click="show_notification(notification_container_visible)" class="fa fa-bell fa-lg fa-white icon" ng-class="notify_icon_class"></i>
+	    					<span ng-show="has_notification" class="badge">{{unread_count}}</span>
+				    	</div>
+				    	<div class="notificationsNav">
+					    	<ul ng-show="notification_container_visible" class="list-group">
+		    					<li class="list-group-item" ng-repeat="notification in notifications">
+	    							<div class="commonMessage">
+	    								{{notification.action_label}}
+	    							</div>
+	    							<div class="commonTimeFooter">
+	    								<a ng-href="{{notifiction.actor.profile_path}}">{{notification.actor.user.name}}</a> {{notification.created_on|date:'dd/MM/yyyy hh:mm'}}
+	    							</div>
+	    						</li>
+			    {% endverbatim %}
+	    						<li class="list-group-item">
+	    							<a href="" class="list-group-item-text pull-right">See all</a>
+	    						</li>
+							</ul>
+						</div>
+				    </div>
 	    	</div>
 	    {% endif  %}
 	  </div><!-- /.container-fluid -->

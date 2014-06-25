@@ -4,9 +4,9 @@ import datetime
 from ola.common.ajax import JSONParser
 from ola.common.utils import get_month_end
 from ola.common.permissions import UserGroupManager, GROUP_NAME_MAP
-from models import Leave, LeaveType, Holiday, LeaveBucket
+from models import Leave, LeaveType, Holiday, LeaveBucket, LeaveStatus
 from forms import LeaveForm, LeaveTypeForm, HolidayForm
-from subscriber.models import Subscriber
+from subscriber.models import Subscriber, NotificationAction, SubscriberNotification
 from django.contrib.auth.models import Group, User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger, InvalidPage
 from ola.settings import DATE_INPUT_FORMATS
@@ -21,11 +21,23 @@ class LeaveAjaxHandler(JSONParser):
 			leave.type_of_leave = LeaveType.objects.get(pk=form.cleaned_data['leave_type'])
 			leave.requester = logged_in_employee
 			leave.approver = Subscriber.objects.get(user__id__exact=form.cleaned_data['approver'])
-			leave.status = 0 # pending
+			leave.status = LeaveStatus.PENDING
 			leave.save()
 			SendNotification([leave.approver.user.email], leave.requester.user.email, 'leave_request', leave).start()
+			threading.Thread(target=self.leave_update_trigger, args=(leave, None)).start()
 			return self.respond(is_saved=True, leave=leave.serialize())
 		return self.respond(is_saved=False, errors=form.errors)
+
+	def leave_update_trigger(self, new_leave, old_leave):
+		if not old_leave:
+			if new_leave.status == LeaveStatus.PENDING:
+				SubscriberNotification(
+					actor=new_leave.requester,
+					action=NotificationAction.LEAVE_REQUESTED,
+					recipient=new_leave.approver,
+					has_read=False
+				).save()
+		return True
 
 	def get_subscriber_leave_requests(self, user_id, page_no, no_of_records, show_all, **kwargs):
 		auth_group = UserGroupManager.check_user_group(self.user)

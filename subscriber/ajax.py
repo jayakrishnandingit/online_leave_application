@@ -3,7 +3,8 @@ from ola.common.ajax import JSONParser
 from ola.common.permissions import UserGroupManager, GROUP_NAME_MAP
 from client.forms import ClientForm
 from forms import SubscriberCreationForm
-from models import Subscriber
+from models import Subscriber, SubscriberNotification, NOTIFICATION_ACTION_LABEL
+from constants import NUMBER_OF_VALUES_PER_PAGE
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm, AdminPasswordChangeForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger, InvalidPage
@@ -44,7 +45,8 @@ class SubscriberAjaxHandler(JSONParser):
 	def create_user(self, form_values):
 		logged_in_employee = Subscriber.objects.get(user=self.user)
 		if not UserGroupManager.is_company_admin(self.user):
-			raise UnauthorizedException('Access Violation')
+			return self.respond(is_saved=False, auth_errors='Permission Denied')
+
 		user_form = UserCreationForm(form_values)
 		subscriber_form = SubscriberCreationForm(form_values)
 		subscriber_form.is_company_admin = UserGroupManager.is_company_admin(self.user)
@@ -77,7 +79,7 @@ class SubscriberAjaxHandler(JSONParser):
 		is_company_admin = UserGroupManager.is_company_admin(self.user)
 		if logged_in_employee.id != subscriber_to_save.id:
 			if not is_company_admin:
-				raise UnauthorizedException('Access Violation')
+				return self.respond(is_saved=False, auth_errors='Permission Denied')
 
 		subscriber_form = SubscriberCreationForm(data=form_values)
 		subscriber_form.is_company_admin = is_company_admin
@@ -115,7 +117,7 @@ class SubscriberAjaxHandler(JSONParser):
 		is_company_admin = UserGroupManager.is_company_admin(self.user)
 		if logged_in_employee.id != subscriber_to_save.id:
 			if not is_company_admin:
-				raise UnauthorizedException('Access Violation')
+				return self.respond(is_saved=False, auth_errors='Permission Denied')
 
 		form = PasswordChangeForm(user=subscriber_to_save.user, data=form_values)
 		if logged_in_employee.id != subscriber_to_save.id and is_company_admin:
@@ -125,10 +127,10 @@ class SubscriberAjaxHandler(JSONParser):
 			return self.respond(is_saved=True)
 		return self.respond(is_saved=False, errors=form.errors)
 
-	def get_all(self, page_no, no_of_records, show_all):
+	def get_all(self, page_no=1, no_of_records=NUMBER_OF_VALUES_PER_PAGE, show_all=True):
 		auth_group = UserGroupManager.check_user_group(self.user)
 		if not UserGroupManager.is_company_admin(self.user):
-			raise UnauthorizedException('Access Violation')
+			return self.respond(is_saved=False, auth_errors='Permission Denied', subscribers=[])
 		logged_in_employee = Subscriber.objects.get(user=self.user)
 		subscribers = Subscriber.objects.filter(client__id__exact=logged_in_employee.client.id).order_by('-created_on')
 
@@ -164,6 +166,7 @@ class SubscriberAjaxHandler(JSONParser):
 			serializedObjects.append(subscriber.serialize(maxDepth=1))
 
 		return self.respond(
+			is_saved=True,
 			subscribers=serializedObjects,
 			previous_page_number=prevPageNo,
 			next_page_number=nextPageNo,
@@ -178,8 +181,8 @@ class SubscriberAjaxHandler(JSONParser):
 		is_company_admin = UserGroupManager.is_company_admin(self.user)
 		if logged_in_employee.id != subscriber_to_get.id:
 			if not is_company_admin:
-				raise UnauthorizedException('Access Violation')
-		return self.respond(subscriber=subscriber_to_get.serialize())
+				return self.respond(is_saved=False, auth_errors='Permission Denied', subscriber={})
+		return self.respond(is_saved=True, subscriber=subscriber_to_get.serialize())
 
 	def get_approvers(self):
 		logged_in_employee = Subscriber.objects.get(user=self.user)
@@ -202,3 +205,42 @@ class SubscriberAjaxHandler(JSONParser):
 		)
 		return subscribers
 
+class SubscriberNotificationAjaxHandler(JSONParser):
+	def get_unread(self, user_id):
+		logged_in_employee = Subscriber.objects.get(user=self.user)
+		subscriber_to_get = Subscriber.objects.get(user__id__exact=int(user_id))
+		is_company_admin = UserGroupManager.is_company_admin(self.user)
+		if logged_in_employee.id != subscriber_to_get.id:
+			if not is_company_admin:
+				return self.respond(is_saved=False, auth_errors='Permission Denied', notifications=[])
+
+		notifications = SubscriberNotification.objects.filter(
+			recipient=subscriber_to_get,
+			has_read__exact=False
+		).order_by('-created_on')
+		unread_count = notifications.count()
+		serialized_objects = []
+		for notification in notifications[:5]:
+			serialized_objects.append(notification.serialize())
+		return self.respond(
+			is_saved=True,
+			notifications=serialized_objects,
+			unread_count=unread_count,
+			notification_action_label=NOTIFICATION_ACTION_LABEL
+		)
+
+	def mark_read(self, user_id):
+		logged_in_employee = Subscriber.objects.get(user=self.user)
+		subscriber_to_get = Subscriber.objects.get(user__id__exact=int(user_id))
+		is_company_admin = UserGroupManager.is_company_admin(self.user)
+		if logged_in_employee.id != subscriber_to_get.id:
+			if not is_company_admin:
+				return self.respond(is_saved=False, auth_errors='Permission Denied')		
+
+		SubscriberNotification.objects.filter(
+			recipient=subscriber_to_get,
+			has_read__exact=False
+		).update(
+			has_read=True
+		)
+		return self.respond(is_saved=True)

@@ -13,5 +13,5 @@ urlpatterns = patterns('',
     url(r'^/type/view$', LeaveTypeFormView.as_view(), name='leave_type_form'),
     url(r'^/holiday$', csrf_exempt(HolidayAPI.as_view()), name='holiday'),
     url(r'^/holiday/view$', HolidayFormView.as_view(), name='holiday_view'),
-    url(r'^/subscriber/([\d]+)$', csrf_exempt(SubscriberLeaveDetailsAPI.as_view()), name='subscriber_leave_details')
+    url(r'^/subscriber/([\d]+)$', csrf_exempt(SubscriberLeaveDetailsAPI.as_view()), name='subscriber_leave_details'),
 )

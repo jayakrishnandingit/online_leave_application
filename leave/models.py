@@ -1,5 +1,6 @@
 from django.db import models
 from ola.common.models import BASIC_TYPES
+from ola.common.config import BaseEnum
 from client.models import Client, Team
 from subscriber.models import Subscriber
 
@@ -115,6 +116,20 @@ class Holiday(models.Model):
 				pass
 
 		return output
+
+class LeaveStatusEnum(BaseEnum):
+	def __init__(self, *args, **kwargs):
+		self.PENDING = 0
+		self.APPROVED = 1
+		self.DENIED = 2
+
+LeaveStatus = LeaveStatusEnum()
+
+LEAVE_STATUS_LABEL = {
+	LeaveStatus.PENDING : 'Pending Approval',
+	LeaveStatus.APPROVED : 'Approved',
+	LeaveStatus.DENIED : 'Denied',
+}
 
 class Leave(models.Model):
 	start = models.DateTimeField()

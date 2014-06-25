@@ -38,6 +38,77 @@ ola.controller('RegistrationFormController', function($scope, $http) {
 
 });
 
+ola.controller('NotificationController', function ($scope, $http, $interval) {
+	$scope.notifications = new Array();
+	$scope.unread_count = 0;
+	$scope.has_notification = false;
+	$scope.notify_icon_class = '';
+	$scope.notification_container_visible = false;
+	$scope.get_notifications = function () {
+		$http.get(
+			'/subscriber/' + logged_in_user_id + '/notifications',
+			{
+				'responseType' : 'json',
+				'params' : {'fn' : 'get_unread'}
+			}
+		).success(function(data, status, headers, config) {
+		  // this callback will be called asynchronously
+		  // when the response is available
+		  	if (data.notifications.length > 0) {
+		  		$scope.has_notification = true;
+		  		$scope.unread_count = data.unread_count;
+		  		$scope.notify_icon_class = 'iconFullOpacity';
+		  		angular.forEach(data.notifications, function (value) {
+		  			value['action_label'] = data.notification_action_label[value['action']];
+		  		});
+		  	} else {
+		  		var empty_notification = {
+		  			'action_label' : 'You have no new notifications',
+		  			'actor' : {
+		  				'user' : {
+		  					'name': ''
+		  				}
+		  			},
+		  			'created_on' : ''
+		  		}
+		  		data.notifications.push(empty_notification);
+		  	}
+			$scope.notifications = data.notifications;
+		}).error(function(data, status, headers, config) {
+		  // called asynchronously if an error occurs
+		  // or server returns response with an error status.
+		  console.log(data);
+		});
+	}
+	$scope.get_notifications();
+	$scope.show_notification = function (hide) {
+		if (!$scope.notification_container_visible) {
+			$scope.notification_container_visible = true;
+			$scope.has_notification = false;
+			$scope.notify_icon_class = '';
+			if ($scope.unread_count > 0) {
+				$http.post(
+					'/subscriber/' + logged_in_user_id + '/notifications',
+					['mark_read'],
+					{'responseType' : 'json'}
+				).success(function(data, status, headers, config) {
+				  // this callback will be called asynchronously
+				  // when the response is available
+					$scope.unread_count = 0;
+				}).error(function(data, status, headers, config) {
+				  // called asynchronously if an error occurs
+				  // or server returns response with an error status.
+				  alert('error');
+				  console.log(data);
+				});
+			}
+		} else {
+			$scope.notification_container_visible = false;
+		}
+	} 
+	$interval($scope.get_notifications, 5*60*1000);
+});
+
 ola.controller('SubscriberEditFormController', function($scope, $http) {
 	$scope.subscriber = {};
 	$scope.form_data = {};

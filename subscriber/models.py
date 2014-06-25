@@ -2,6 +2,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from ola.common.models import BASIC_TYPES
+from ola.common.config import BaseEnum
 from django.contrib.auth.models import User
 from client.models import Client, Team
 
@@ -78,3 +79,50 @@ class Subscriber(models.Model):
 			'is_staff' : value.is_staff,
 			'is_active' : value.is_active
 		}
+
+class NotificationActionEnum(BaseEnum):
+	def __init__(self, *args, **kwargs):
+		self.LEAVE_REQUESTED = 0
+		self.LEAVE_APPROVED = 1
+		self.LEAVE_DENIED = 2
+
+NotificationAction = NotificationActionEnum()
+
+NOTIFICATION_ACTION_LABEL = {
+	NotificationAction.LEAVE_REQUESTED : 'Leave Requested',
+	NotificationAction.LEAVE_APPROVED : 'Leave Approved',
+	NotificationAction.LEAVE_DENIED : 'Leave Denied',
+}
+
+class SubscriberNotification(models.Model):
+	actor = models.ForeignKey(Subscriber, related_name='notification_actor')
+	action = models.IntegerField()
+	recipient = models.ForeignKey(Subscriber, related_name='notification_recipient')
+	has_read = models.BooleanField(default=False)
+	created_on = models.DateTimeField(auto_now_add=True)
+	updated_on = models.DateTimeField(auto_now=True)
+	maxDepth = 1
+
+	def serialize(self, maxDepth=1, requestPassword=False):
+		import datetime
+		from django.contrib.auth.models import User
+		from ola.settings import DATETIME_INPUT_FORMATS, DATE_INPUT_FORMATS
+
+		output = {}
+
+		for prop in self._meta.get_all_field_names():
+			value = getattr(self, prop)
+			if value is None or isinstance(value, BASIC_TYPES):
+				output[prop] = value
+			elif isinstance(value, datetime.datetime):
+				output[prop] = value.strftime(DATETIME_INPUT_FORMATS[0])
+			elif isinstance(value, datetime.date):
+				output[prop] = value.strftime(DATE_INPUT_FORMATS[0])
+			elif isinstance(value, models.Model):
+				if self.maxDepth <= maxDepth:
+					output[prop] = value.serialize((maxDepth - 1))
+				else:
+					output[prop] = value.id
+			else:
+				pass
+		return output

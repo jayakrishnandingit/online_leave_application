@@ -34,7 +34,8 @@
 				<tr ng-repeat="subscriber in subscribers">
 					{% verbatim %}
 						<td>
-							<a ng-href="{{subscriber.profile_path}}">{{subscriber.user.name}}</a></td>
+							<a ng-href="{{subscriber.profile_path}}">{{subscriber.user.name}}</a>
+						</td>
 						<td>{{subscriber.user.email}}</td>
 					{% endverbatim %}
 				</tr>

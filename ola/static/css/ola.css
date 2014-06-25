@@ -102,6 +102,11 @@ ul.navbar-nav li.active a, ul.navbar-nav li.active a i {
     vertical-align: top;
 }
 
+.badge.white {
+  background: #FFFFFF;
+  color: #666;
+}
+
 .badge.blue {
     background-color: #15ADFF;
 }
@@ -517,29 +522,19 @@ div.notificationsNav {
 }
 
 div.notificationsNav ul {
-    list-style: none;
-    width: 35%;
-    margin: 1%;
-    padding: 0;
-    right: 2%;
+    right: 5%;
     top: 75%;
-    display: none;
+    width: 25%;
     position: absolute;
-    box-shadow: 0 2px 2px #CDCDCD;
-    background: #E0E0E0;
-    min-height: 300px;
+    box-shadow: 0 3px 10px 1px #E0E0E0;
     max-height: 500px;
-    overflow-y: scroll;
+    border-radius: 5px 5px;
 }
 
 div.notificationsNav ul li {
-    padding: 2% 2% 0 2%;
-    margin: 1%;
-    background: #FFFFFF;
     float: left;
-    border-bottom: 1px solid #CDCDCD;
     cursor: pointer;
-    box-shadow: 0 5px 5px #CDCDCD;
+    width: 100%;
 }
 
 div.notificationsNav ul li div.message, div.commonMessage {
