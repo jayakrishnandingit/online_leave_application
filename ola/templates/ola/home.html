@@ -52,14 +52,8 @@
 			</div>
 		</div>
 	</form>
-	<div class="col-xs-6">
-		<legend>Days you are going on leave.</legend>
-		<div calendar="leaves_approved_calendar" ui-calendar="calendarConfig" ng-model="eventSources"></div>
-	</div>
-	<div class="col-xs-6">
-		<legend>Days you have requested for leave.</legend>
-		<div calendar="leaves_requested_calendar" ui-calendar="calendarConfig" ng-model="eventSources2"></div>
-	</div>
+	<legend>Leaves at a glance</legend>
+	<div calendar="subscriber_leaves_calendar" ui-calendar="calendarConfig" ng-model="eventSources"></div>
 </div>
 <script type="text/javascript">
 	$('#id_start').datetimepicker({

@@ -52,6 +52,11 @@
 							<i class="fa fa-history fa-fw"></i>
 							History
 						</a></li>
+						{% if auth_group.COMPANY_ADMIN or auth_group.LEAVE_APPROVER %}
+						<li><a href="#">
+								Approve
+						</a></li>
+						{% endif %}
 						{% if auth_group.COMPANY_ADMIN %}
 							<li><a href="{% url 'leave_type_form' %}">
 								<i class="fa fa-tasks fa-fw"></i>
@@ -93,7 +98,7 @@
 		      </ul>
 		    </div><!-- /.navbar-collapse -->
 	    	<div class="userContainer">
-	    		<div class="customIconContainer">
+	    		<div class="customIconContainer"title="Logout">
 		    		<a href="{% url 'django.contrib.auth.views.logout_then_login' %}?next={{request.path}}">
 	    				<i class="fa fa-sign-out fa-lg fa-white icon"></i>
 		    		</a>
@@ -109,7 +114,7 @@
 		    	</div>
 		    	{% verbatim %}
 		    		<div ng-controller="NotificationController" class="pull-right">
-				    	<div class="customIconContainer">
+				    	<div class="customIconContainer" title="Notifications">
 	    					<i ng-click="show_notification(notification_container_visible)" class="fa fa-bell fa-lg fa-white icon" ng-class="notify_icon_class"></i>
 	    					<span ng-show="has_notification" class="badge">{{unread_count}}</span>
 				    	</div>
@@ -129,6 +134,13 @@
 	    						</li>
 							</ul>
 						</div>
+				    </div>
+				    <div class="pull-right">
+				    	<div class="customIconContainer" title="My Account">
+				    		<a href="{% url 'subscriber_details' request.user.id %}">
+				    			<i class="fa fa-user fa-lg fa-white icon"></i>
+				    		</a>
+				    	</div>
 				    </div>
 	    	</div>
 	    {% endif  %}

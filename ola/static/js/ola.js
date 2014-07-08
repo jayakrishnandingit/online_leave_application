@@ -562,7 +562,7 @@ ola.controller('HomeController', function ($scope, $http) {
 				$scope.save_success = data.is_saved;
 				if(data.is_saved) {
 					$scope.init();
-					$scope.leaves.push(data.leave);
+					$scope.leaves.push($scope.create_event(getDateFromString(data.leave.start), getDateFromString(data.leave.end), data.leave.comments, data.leave.id));
 				}
 			}).error(function(data, status, headers, config) {
 			  // called asynchronously if an error occurs
@@ -582,13 +582,12 @@ ola.controller('HomeController', function ($scope, $http) {
 		};
 		return an_event;
 	}
-	$scope.get_requested_leaves = function(start, end, callback) {
+	$scope.get_subscriber_leaves = function(start, end, callback) {
 		$http.get(
 			'/leave/subscriber/' + user_id,
 			{
 				'responseType' : 'json',
 				'params' : {
-					'status' : 0,
 					'start_date_time' : getFormattedDate(start),
 					'end_date_time' : getFormattedDate(end),
 					'page_no' : $scope.current_page_no,
@@ -614,39 +613,8 @@ ola.controller('HomeController', function ($scope, $http) {
 		  console.log(data);
 		});
 	}
-	$scope.get_approved_leaves = function (start, end, callback) {
-		$http.get(
-			'/leave/subscriber/' + user_id,
-			{
-				'responseType' : 'json',
-				'params' : {
-					'status' : 1, 
-					'start_date_time' : getFormattedDate(start), 
-					'end_date_time' : getFormattedDate(end), 
-					'page_no' : $scope.current_page_no, 
-					'no_of_records' : $scope.nor, 
-					'show_all' : 0, 
-					'fn' : 'get_subscriber_leave_requests'
-				}
-			}
-		).success(function(data, status, headers, config) {
-		  // this callback will be called asynchronously
-		  // when the response is available
-			$scope.approved_leaves = [];
-			if (data.leaves.length > 0) {
-				$.each(data.leaves, function(index, leave) {
-					$scope.approved_leaves.push($scope.create_event(getDateFromString(leave.start), getDateFromString(leave.end), leave.comments, leave.id));
-				});
-			}
-			callback($scope.approved_leaves);
-		}).error(function(data, status, headers, config) {
-		  // called asynchronously if an error occurs
-		  // or server returns response with an error status.
-		  console.log(data);
-		});
-	}
-	$scope.eventSources = [$scope.get_approved_leaves];
-	$scope.eventSources2 =[$scope.get_requested_leaves];
+	
+	$scope.eventSources =[$scope.get_subscriber_leaves];
 	$scope.calendarConfig = {
 		editable: false,
 		selectable: false,
