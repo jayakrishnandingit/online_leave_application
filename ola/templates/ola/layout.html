@@ -24,6 +24,7 @@
 		var logged_in_user_id = '{{request.user.id}}';
 	</script>
 	{% block head %}{% endblock %}
+	dop031347598
 </head>
 <body>
 	<div id="tempDisableDiv" class="disableme"></div>
@@ -53,8 +54,9 @@
 							History
 						</a></li>
 						{% if auth_group.COMPANY_ADMIN or auth_group.LEAVE_APPROVER %}
-						<li><a href="#">
-								Approve
+						<li><a href="{% url 'leave_approve_view' %}">
+							<i class="fa fa-check-square-o fa-fw"></i>
+							Approve
 						</a></li>
 						{% endif %}
 						{% if auth_group.COMPANY_ADMIN %}

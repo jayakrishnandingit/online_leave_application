@@ -39,6 +39,63 @@ class LeaveAjaxHandler(JSONParser):
 				).save()
 		return True
 
+	def get_pending_approvals_for_subscriber(self, user_id, page_no, no_of_records, show_all, **kwargs):
+		auth_group = UserGroupManager.check_user_group(self.user)
+		logged_in_employee = Subscriber.objects.get(user=self.user)
+		subscriber_to_get = Subscriber.objects.get(user__id__exact=user_id)
+		is_company_admin = UserGroupManager.is_company_admin(self.user)
+		if not UserGroupManager.can_approve_leave(self.user):
+			return self.respond(is_saved=False, auth_errors='Permission Denied')
+		if not logged_in_employee.id == subscriber_to_get.id:
+			if not is_company_admin:
+				return self.respond(is_saved=False, auth_errors='Permission Denied')
+
+		pending_approvals = self._prepare_search(Leave.objects.filter(
+			approver=subscriber_to_get,
+			status__exact=LeaveStatus.PENDING
+		).order_by('-created_on'), **kwargs)
+
+		show_all = bool(int(show_all))
+		prevPageNo = 0
+		nextPageNo = 0
+		current_page_number = 0
+		num_of_pages = pending_approvals.count()
+		if not show_all:
+			paginator = Paginator(pending_approvals, no_of_records)
+			try:
+				pending_approvals = paginator.page(page_no)
+			except PageNotAnInteger:
+				# If page is not an integer, deliver first page.
+				pending_approvals = paginator.page(1)
+			except EmptyPage:
+				# If page is out of range (e.g. 9999), deliver last page of results.
+				pending_approvals = paginator.page(paginator.num_pages)
+
+			try:
+				prevPageNo = pending_approvals.previous_page_number()
+			except InvalidPage as e:
+				prevPageNo = page_no
+			try:
+				nextPageNo = pending_approvals.next_page_number()
+			except InvalidPage as e:
+				nextPageNo = page_no
+			current_page_number = pending_approvals.number
+			num_of_pages = pending_approvals.paginator.num_pages
+
+		serializedObjects = []
+		for pending in pending_approvals:
+			serializedObjects.append(pending.serialize(maxDepth=1))
+
+		return self.respond(
+			pending_approvals=serializedObjects,
+			previous_page_number=prevPageNo,
+			next_page_number=nextPageNo,
+			current_page_number=current_page_number,
+			num_of_pages=num_of_pages,
+			no_of_records=no_of_records,
+			subscriber=subscriber_to_get.serialize(maxDepth=1)
+		)
+
 	def get_subscriber_leave_requests(self, user_id, page_no, no_of_records, show_all, **kwargs):
 		auth_group = UserGroupManager.check_user_group(self.user)
 		logged_in_employee = Subscriber.objects.get(user=self.user)
@@ -46,7 +103,7 @@ class LeaveAjaxHandler(JSONParser):
 		is_company_admin = UserGroupManager.is_company_admin(self.user)
 		if not logged_in_employee.id == subscriber_to_get.id:
 			if not is_company_admin:
-				raise UnauthorizedException('Access Violation')
+				return self.respond(is_saved=False, auth_errors='Permission Denied')
 
 		leaves = self._prepare_search(Leave.objects.filter(requester=subscriber_to_get).order_by('-created_on'), **kwargs)
 

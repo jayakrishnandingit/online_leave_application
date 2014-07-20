@@ -1,0 +1,59 @@
+{% extends "ola/layout.html" %}
+{% block head %}
+	<script>
+		$(document).ready(function () {
+			$.each($('ul#main-nav-ul li'), function (index, elem) {
+				$(elem).removeClass('active');
+			});
+			$('#nav-leave-settings').addClass('active');
+		});
+	</script>
+{% endblock %}
+{% block content %}
+<div class="container" ng-controller="PendingApprovalController">
+	<legend>
+		Pending Approvals
+	</legend>
+	<form name="leaveApproveForm" class="form-horizontal" role="form" action="javascript:void(0);" method="POST" novalidate>
+		<table class="table table-bordered">
+			<tr>
+				<th>
+					Name
+				</th>
+				<th>
+					Date
+				</th>
+				<th>
+					Type of Leave
+				</th>
+				<th>
+					Actions
+				</th>
+			</tr>
+			<tr ng-repeat="leave in leaves">
+				<td>
+					{{leave.requester.name}}
+				</td>
+				<td>
+					{{leave.period}}
+				</td>
+				<td>
+					{{leave.type_of_leave.type_of_leave}}
+				</td>
+				<td>
+					<div class="btn-group floatRight">
+						<a class="btn btn-success" ng-click="validate_and_proceed(leaveTypeForm.$valid, $index)" ng-show="form.has_changed" ng-disabled="leaveTypeForm.$invalid" title="Save">
+							<i class="fa fa-check fa-lg"></i>
+							Instant Approve
+						</a>
+						<a class="btn btn-danger" ng-click="create_form($index)" ng-show="$last" ng-disabled="leaveTypeForm.$invalid" title="Add one more">
+							<i class="fa fa-times fa-lg"></i>
+							Instant Deny
+						</a>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>
+{% end block %}

@@ -1,8 +1,11 @@
+import datetime
+import decimal
 from django.db import models
 from ola.common.models import BASIC_TYPES
 from ola.common.config import BaseEnum
 from client.models import Client, Team
 from subscriber.models import Subscriber
+from ola.settings import DATETIME_INPUT_FORMATS, DATE_INPUT_FORMATS
 
 # Create your models here.
 class LeaveType(models.Model):
@@ -16,10 +19,6 @@ class LeaveType(models.Model):
 	maxDepth = 1
 
 	def serialize(self, maxDepth=1):
-		import datetime
-		import decimal
-		from ola.settings import DATETIME_INPUT_FORMATS, DATE_INPUT_FORMATS
-
 		output = {}
 
 		for prop in self._meta.get_all_field_names():
@@ -53,10 +52,6 @@ class LeaveBucket(models.Model):
 	maxDepth = 1
 
 	def serialize(self, maxDepth=1):
-		import datetime
-		import decimal
-		from ola.settings import DATETIME_INPUT_FORMATS, DATE_INPUT_FORMATS
-
 		output = {}
 
 		for prop in self._meta.get_all_field_names():
@@ -90,10 +85,6 @@ class Holiday(models.Model):
 	maxDepth = 1
 
 	def serialize(self, maxDepth=1):
-		import datetime
-		import decimal
-		from ola.settings import DATETIME_INPUT_FORMATS, DATE_INPUT_FORMATS
-
 		output = {}
 
 		for prop in self._meta.get_all_field_names():
@@ -142,11 +133,10 @@ class Leave(models.Model):
 	created_on = models.DateTimeField(auto_now_add=True)
 	maxDepth = 1
 
-	def serialize(self, maxDepth=1):
-		import datetime
-		import decimal
-		from ola.settings import DATETIME_INPUT_FORMATS, DATE_INPUT_FORMATS
+	def period(self):
+		return '%s - %s' % (self.start.strftime(DATETIME_INPUT_FORMATS[0]), self.end.strftime(DATETIME_INPUT_FORMATS[0]))
 
+	def serialize(self, maxDepth=1):
 		output = {}
 
 		for prop in self._meta.get_all_field_names():
@@ -167,5 +157,5 @@ class Leave(models.Model):
 					output[prop] = value.id
 			else:
 				pass
-
+		output['period'] = self.period()
 		return output

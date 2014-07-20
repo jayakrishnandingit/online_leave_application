@@ -82,7 +82,7 @@ class LeaveTypeFormView(View):
 		}
 		return render(request, 'leave/leave_type_form.html', context)
 
-class SubscriberLeaveDetailsAPI(View):
+class SubscriberLeaveAPI(View):
 	def get(self, request, user_id):
 		request_values = {}
 		for key, value in request.GET.iteritems():
@@ -135,6 +135,22 @@ class HolidayAPI(View):
 		response['Content-Type'] = 'application/json'
 		return response
 
+class ApproverLeaveAPI(View):
+	def get(self, request, user_id):
+		ajaxMainClass = LeaveAjaxHandler()
+		ajaxMainClass.httpRequest = request
+		ajaxMainClass.user = request.user
+		funtionToCall = getattr(ajaxMainClass, 'get_pending_approvals_for_subscriber', None)
+		if not funtionToCall:
+			return http.Http404
+
+		responseValues = funtionToCall(start_date, end_date)
+		response = http.HttpResponse()
+		response.status_code = 200
+		response.write(responseValues)
+		response['Content-Type'] = 'application/json'
+		return response	
+
 class HolidayFormView(View):
 	def get(self, request):
 		auth_group = UserGroupManager.check_user_group(request.user)
@@ -144,3 +160,14 @@ class HolidayFormView(View):
 			'auth_group' : auth_group
 		}
 		return render(request, 'leave/holidays.html', context)
+
+class LeaveApproveView(View):
+	def get(self, request):
+		auth_group = UserGroupManager.check_user_group(request.user)
+		if not UserGroupManager.is_company_admin(request.user):
+			if not UserGroupManager.can_approve_leave(request.user)
+				raise UnauthorizedException('Access Violation')
+		context = {
+			'auth_group' : auth_group
+		}
+		return render(request, 'leave/pending_approval.html', context)

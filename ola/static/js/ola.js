@@ -627,6 +627,42 @@ ola.controller('HomeController', function ($scope, $http) {
 
 });
 
+ola.controller('PendingApprovalController', function ($scope, $http) {
+    $scope.leaves = [];
+	$scope.prev_page_no = 1;
+	$scope.current_page_no = 1;
+	$scope.next_page_no = 1;
+	$scope.nop = 1;
+	$scope.nor = 10;
+	$scope.fn = '';
+    $scope.init = function() {
+    	return;
+    }
+    $scope.init();
+	$scope.get_pending_approvals = function () {
+		$http.get(
+			'/leave/subscriber/' + user_id + '/pending/approval',
+			{
+				'responseType' : 'json',
+			}
+		).success(function(data, status, headers, config) {
+		  // this callback will be called asynchronously
+		  // when the response is available
+			$scope.subscribers = data.subscribers;
+			$scope.current_page_no = data.current_page_number;
+			$scope.next_page_no = data.next_page_number;
+			$scope.prev_page_no = data.prev_page_number;
+			$scope.nop = data.num_of_pages;
+			$scope.nor = data.no_of_records;
+		}).error(function(data, status, headers, config) {
+		  // called asynchronously if an error occurs
+		  // or server returns response with an error status.
+		  console.log(data);
+		});
+	}
+    $scope.get_pending_approvals();
+});
+
 function showRegistrationTab(tab) {
 	$.each($('ul.nav-tabs li a'), function (index, elem) {
 		$(elem).removeClass('current');
