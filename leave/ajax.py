@@ -11,6 +11,7 @@ from django.contrib.auth.models import Group, User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger, InvalidPage
 from ola.settings import DATE_INPUT_FORMATS
 from mailer import SendNotification
+from constants import NUMBER_OF_RECORDS_PER_PAGE, INITIAL_PAGE_NO
 
 class LeaveAjaxHandler(JSONParser):
 	def request_leave(self, form_values):
@@ -39,7 +40,7 @@ class LeaveAjaxHandler(JSONParser):
 				).save()
 		return True
 
-	def get_pending_approvals_for_subscriber(self, user_id, page_no, no_of_records, show_all, **kwargs):
+	def get_pending_approvals_for_subscriber(self, user_id, page_no=INITIAL_PAGE_NO, no_of_records=NUMBER_OF_RECORDS_PER_PAGE, show_all=False, **kwargs):
 		auth_group = UserGroupManager.check_user_group(self.user)
 		logged_in_employee = Subscriber.objects.get(user=self.user)
 		subscriber_to_get = Subscriber.objects.get(user__id__exact=user_id)
@@ -96,7 +97,7 @@ class LeaveAjaxHandler(JSONParser):
 			subscriber=subscriber_to_get.serialize(maxDepth=1)
 		)
 
-	def get_subscriber_leave_requests(self, user_id, page_no, no_of_records, show_all, **kwargs):
+	def get_subscriber_leave_requests(self, user_id, page_no=INITIAL_PAGE_NO, no_of_records=NUMBER_OF_RECORDS_PER_PAGE, show_all=False, **kwargs):
 		auth_group = UserGroupManager.check_user_group(self.user)
 		logged_in_employee = Subscriber.objects.get(user=self.user)
 		subscriber_to_get = Subscriber.objects.get(user__id__exact=user_id)

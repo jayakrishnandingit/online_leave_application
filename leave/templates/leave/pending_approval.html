@@ -30,9 +30,10 @@
 					Actions
 				</th>
 			</tr>
+			{% verbatim %}
 			<tr ng-repeat="leave in leaves">
 				<td>
-					{{leave.requester.name}}
+					<a ng-href="{{leave.requester.profile_path}}">{{leave.requester.name}}</a>
 				</td>
 				<td>
 					{{leave.period}}
@@ -41,19 +42,18 @@
 					{{leave.type_of_leave.type_of_leave}}
 				</td>
 				<td>
-					<div class="btn-group floatRight">
-						<a class="btn btn-success" ng-click="validate_and_proceed(leaveTypeForm.$valid, $index)" ng-show="form.has_changed" ng-disabled="leaveTypeForm.$invalid" title="Save">
-							<i class="fa fa-check fa-lg"></i>
-							Instant Approve
+					<div class="btn-group">
+						<a class="btn btn-success" ng-click="approve_leave(leaveApproveForm.$valid, $index)" title="Approve">
+							<i class="fa fa-check fa-fw"></i>
 						</a>
-						<a class="btn btn-danger" ng-click="create_form($index)" ng-show="$last" ng-disabled="leaveTypeForm.$invalid" title="Add one more">
-							<i class="fa fa-times fa-lg"></i>
-							Instant Deny
+						<a class="btn btn-default" ng-click="deny_leave($index)" title="Deny">
+							<i class="fa fa-times fa-fw"></i>
 						</a>
 					</div>
 				</td>
 			</tr>
+			{% endverbatim %}
 		</table>
 	</form>
 </div>
-{% end block %}
+{% endblock %}

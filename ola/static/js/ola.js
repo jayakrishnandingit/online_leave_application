@@ -526,10 +526,9 @@ ola.controller('HomeController', function ($scope, $http) {
     $scope.init();
 	$scope.get_approvers = function () {
 		$http.get(
-			'/subscriber',
+			'/subscriber/approvers',
 			{
 				'responseType' : 'json',
-				'params' : {'fn' : 'get_approvers'}
 			}
 		).then(function(res) {
 		  // this callback will be called asynchronously
@@ -589,11 +588,7 @@ ola.controller('HomeController', function ($scope, $http) {
 				'responseType' : 'json',
 				'params' : {
 					'start_date_time' : getFormattedDate(start),
-					'end_date_time' : getFormattedDate(end),
-					'page_no' : $scope.current_page_no,
-					'no_of_records' : $scope.nor,
-					'show_all' : 0,
-					'fn' : 'get_subscriber_leave_requests'
+					'end_date_time' : getFormattedDate(end)
 				}
 			}
 		).success(function(data, status, headers, config) {
@@ -634,21 +629,21 @@ ola.controller('PendingApprovalController', function ($scope, $http) {
 	$scope.next_page_no = 1;
 	$scope.nop = 1;
 	$scope.nor = 10;
-	$scope.fn = '';
     $scope.init = function() {
     	return;
     }
     $scope.init();
-	$scope.get_pending_approvals = function () {
+	$scope.get_pending_approvals = function (page_no, no_of_records, show_all) {
 		$http.get(
-			'/leave/subscriber/' + user_id + '/pending/approval',
+			'/leave/approver/' + logged_in_user_id,
 			{
 				'responseType' : 'json',
+				'params' : {'page_no' : page_no, 'no_of_records' : no_of_records, 'show_all' : show_all}
 			}
 		).success(function(data, status, headers, config) {
 		  // this callback will be called asynchronously
 		  // when the response is available
-			$scope.subscribers = data.subscribers;
+			$scope.leaves = data.pending_approvals;
 			$scope.current_page_no = data.current_page_number;
 			$scope.next_page_no = data.next_page_number;
 			$scope.prev_page_no = data.prev_page_number;
@@ -660,7 +655,7 @@ ola.controller('PendingApprovalController', function ($scope, $http) {
 		  console.log(data);
 		});
 	}
-    $scope.get_pending_approvals();
+    $scope.get_pending_approvals($scope.current_page_no, $scope.nor, 0);
 });
 
 function showRegistrationTab(tab) {

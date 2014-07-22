@@ -2,6 +2,7 @@ import json
 import datetime
 from django import http
 from django.shortcuts import render
+from django.core.urlresolvers import reverse
 from ola.common.permissions import UserGroupManager
 from forms import LeaveForm, LeaveTypeForm
 from django.views.generic import View
@@ -84,17 +85,14 @@ class LeaveTypeFormView(View):
 
 class SubscriberLeaveAPI(View):
 	def get(self, request, user_id):
-		request_values = {}
-		for key, value in request.GET.iteritems():
-			request_values.update({key: value})
 		ajaxMainClass = LeaveAjaxHandler()
 		ajaxMainClass.httpRequest = request
 		ajaxMainClass.user = request.user
-		funtionToCall = getattr(ajaxMainClass, request_values.pop('fn'), None)
+		funtionToCall = getattr(ajaxMainClass, 'get_subscriber_leave_requests', None)
 		if not funtionToCall:
 			return http.Http404
 
-		responseValues = funtionToCall(user_id, **request_values)
+		responseValues = funtionToCall(user_id, **request.GET.dict())
 		response = http.HttpResponse()
 		response.status_code = 200
 		response.write(responseValues)
@@ -144,7 +142,7 @@ class ApproverLeaveAPI(View):
 		if not funtionToCall:
 			return http.Http404
 
-		responseValues = funtionToCall(start_date, end_date)
+		responseValues = funtionToCall(user_id, **request.GET.dict())
 		response = http.HttpResponse()
 		response.status_code = 200
 		response.write(responseValues)
@@ -165,8 +163,8 @@ class LeaveApproveView(View):
 	def get(self, request):
 		auth_group = UserGroupManager.check_user_group(request.user)
 		if not UserGroupManager.is_company_admin(request.user):
-			if not UserGroupManager.can_approve_leave(request.user)
-				raise UnauthorizedException('Access Violation')
+			if not UserGroupManager.can_approve_leave(request.user):
+				return http.HttpResponseRedirect(reverse('home_page'))
 		context = {
 			'auth_group' : auth_group
 		}

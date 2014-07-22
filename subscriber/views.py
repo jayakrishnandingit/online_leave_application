@@ -1,6 +1,7 @@
 import json
 from django import http
 from django.shortcuts import render
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AdminPasswordChangeForm, PasswordChangeForm
 from ola.common.permissions import UserGroupManager, GROUP_NAME_MAP
@@ -48,6 +49,22 @@ class SubscriberAPI(View):
 		response['Content-Type'] = 'application/json'
 		return response
 
+class ApproverAPI(View):
+	def get(self, request):
+		ajaxMainClass = SubscriberAjaxHandler()
+		ajaxMainClass.httpRequest = request
+		ajaxMainClass.user = request.user
+		funtionToCall = getattr(ajaxMainClass, 'get_approvers', None)
+		if not funtionToCall:
+			return http.Http404
+
+		responseValues = funtionToCall(**request.GET.dict())
+		response = http.HttpResponse()
+		response.status_code = 200
+		response.write(responseValues)
+		response['Content-Type'] = 'application/json'
+		return response	
+
 class SubscriberRegistrationView(View):
 	def get(self, request):
 		context = {
@@ -93,7 +110,7 @@ class SubscriberView(View):
 	def get(self, request):
 		auth_group = UserGroupManager.check_user_group(request.user)
 		if not UserGroupManager.is_company_admin(request.user):
-			raise UnauthorizedException('Access Violation')
+			return http.HttpResponseRedirect(reverse('home_page'))
 
 		logged_in_employee = Subscriber.objects.get(user=request.user)
 		context = {
@@ -110,8 +127,8 @@ class SubscriberDetailsFormView(View):
 		logged_in_employee = Subscriber.objects.get(user=request.user)
 		if logged_in_employee.id != subscriber.id:
 			if not UserGroupManager.is_company_admin(request.user):
-				# make this exception redirect user to home page
-				raise UnauthorizedException('Access Violation')
+				return http.HttpResponseRedirect(reverse('home_page'))
+
 		password_change_form = PasswordChangeForm(user=request.user)
 		if UserGroupManager.is_company_admin(request.user):
 			password_change_form = AdminPasswordChangeForm(user=user)

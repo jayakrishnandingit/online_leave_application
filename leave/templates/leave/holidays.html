@@ -17,7 +17,7 @@
 				<div calendar="holiday_calendar" ui-calendar="calendarConfig" ng-model="eventSources"></div>
 			</div>
 			<div class="col-xs-4">
-				<div class="alert alert-info" ng-repeat="e in events">
+				<div ng-model="events" class="alert alert-info" ng-repeat="e in events">
                     <a class="close" ng-click="remove($index)"><i class="fa fa-times fa-fw icon"></i></a>
                     <b>
                     	<ng-form name="holiday_form" novalidate action="javascript:void(0);" method="POST">

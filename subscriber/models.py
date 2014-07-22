@@ -64,6 +64,7 @@ class Subscriber(models.Model):
 		output['group'] = self.showGroup
 		output['profile_path'] = self.get_absolute_url()
 		output['profile_url'] = self.profile_url
+		output['name'] = self.name
 		return output
 
 	def _user(self, value, requestPassword):
