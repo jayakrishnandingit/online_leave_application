@@ -130,6 +130,7 @@ class Leave(models.Model):
 	approver = models.ForeignKey(Subscriber, related_name='leave_approver')
 	status = models.IntegerField()
 	comments = models.TextField(null=True)
+	approver_comments = models.TextField(null=True)
 	created_on = models.DateTimeField(auto_now_add=True)
 	maxDepth = 1
 
